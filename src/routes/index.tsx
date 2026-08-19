@@ -2,8 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { 
   BookOpen, LineChart, LayoutDashboard, ArrowLeft, X, 
-  ChevronLeft, ChevronRight, Zap, CheckCircle2, ShieldAlert, Sparkles,
-  Sun, BatteryCharging, Home, Check, AlertTriangle, Cpu
+  Zap, Sun, BatteryCharging, Home, Check, AlertTriangle, Cpu
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -100,26 +99,11 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
   );
 }
 
-// 📚 ข้อมูลสไลด์คลังความรู้แบบแยกเจาะลึกเฉพาะเรื่อง
-const KNOWLEDGE_SLIDES = [
-  // 0: ภาพรวม
-  {
-    title: "ภาพรวมระบบโซลาร์เซลล์ มหาวิทยาลัยมหิดล",
-    subtitle: "งานพันธกิจเพื่อสังคม อ.สบปราบ จ.ลำปาง",
-    content: (
-      <div className="space-y-4 text-center py-4">
-        <div className="inline-block p-4 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400 mb-2">
-          <Zap className="w-12 h-12" />
-        </div>
-        <h3 className="text-2xl font-bold text-amber-400">คลังความรู้ระบบพลังงานสะอาด</h3>
-        <p className="text-slate-300 max-w-lg mx-auto text-sm leading-relaxed">
-          องค์ความรู้การใช้งาน การบำรุงรักษา และหลักการทำงานของระบบโซลาร์เซลล์ทั้ง 3 รูปแบบ เพื่อการจัดการพลังงานอย่างยั่งยืน
-        </p>
-      </div>
-    )
-  },
-  // 1: เจาะลึก Off-Grid
-  {
+// 📚 ข้อมูลรายละเอียดเจาะลึกเฉพาะแต่ละระบบ
+type SystemType = 'OFFGRID' | 'ONGRID' | 'HYBRID';
+
+const KNOWLEDGE_DETAILS: Record<SystemType, { title: string; subtitle: string; content: React.ReactNode }> = {
+  OFFGRID: {
     title: "Off-Grid System (ระบบอิสระ)",
     subtitle: "เจาะลึกระบบสแตนด์อโลน ไม่พึ่งสายส่งการไฟฟ้า",
     content: (
@@ -146,8 +130,7 @@ const KNOWLEDGE_SLIDES = [
       </div>
     )
   },
-  // 2: เจาะลึก On-Grid
-  {
+  ONGRID: {
     title: "On-Grid System (ระบบเชื่อมต่อสายส่ง)",
     subtitle: "เจาะลึกระบบเน้นประหยัดค่าไฟ คืนทุนไวที่สุด",
     content: (
@@ -174,8 +157,7 @@ const KNOWLEDGE_SLIDES = [
       </div>
     )
   },
-  // 3: เจาะลึก Hybrid
-  {
+  HYBRID: {
     title: "Hybrid System (ระบบผสมผสาน)",
     subtitle: "เจาะลึกระบบอัจฉริยะ เสถียรภาพสูงสุด",
     content: (
@@ -202,16 +184,10 @@ const KNOWLEDGE_SLIDES = [
       </div>
     )
   }
-];
+};
 
 function CleanEnergyPortal() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-
-  const openSlideModal = (index: number = 0) => {
-    setCurrentSlideIndex(index);
-    setIsModalOpen(true);
-  };
+  const [activeSystem, setActiveSystem] = useState<SystemType | null>(null);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -301,26 +277,18 @@ function CleanEnergyPortal() {
 
         {/* SECTION 2: KNOWLEDGE BASE */}
         <section id="knowledge" className="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 space-y-6 scroll-mt-20">
-          <div className="flex justify-between items-end">
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-emerald-400">
-                <BookOpen className="w-6 h-6" /> คลังความรู้ระบบโซลาร์เซลล์
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">คลิกที่การ์ดเพื่อเปิดอ่านความรู้เจาะลึกเฉพาะระบบ</p>
-            </div>
-            <button 
-              onClick={() => openSlideModal(0)} 
-              className="text-xs text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer font-medium"
-            >
-              <Sparkles className="w-3.5 h-3.5" /> อ่านสไลด์บทนำ
-            </button>
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-emerald-400">
+              <BookOpen className="w-6 h-6" /> คลังความรู้ระบบโซลาร์เซลล์
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">คลิกที่การ์ดเพื่อเปิดดูรายละเอียดความรู้เจาะลึกเฉพาะระบบ</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* CARD 1: Off-Grid System */}
             <div 
-              onClick={() => openSlideModal(1)}
+              onClick={() => setActiveSystem('OFFGRID')}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
               <span className="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-md">ระบบที่ 1</span>
@@ -331,7 +299,7 @@ function CleanEnergyPortal() {
 
             {/* CARD 2: On-Grid System */}
             <div 
-              onClick={() => openSlideModal(2)}
+              onClick={() => setActiveSystem('ONGRID')}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
               <span className="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-md">ระบบที่ 2</span>
@@ -342,7 +310,7 @@ function CleanEnergyPortal() {
 
             {/* CARD 3: Hybrid System */}
             <div 
-              onClick={() => openSlideModal(3)}
+              onClick={() => setActiveSystem('HYBRID')}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
               <span className="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-md">ระบบที่ 3</span>
@@ -374,67 +342,41 @@ function CleanEnergyPortal() {
 
       </div>
 
-      {/* --- MODAL READ SLIDES --- */}
-      {isModalOpen && (
+      {/* --- MODAL DETAIL POPUP --- */}
+      {activeSystem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-          <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-3xl p-6 shadow-2xl relative flex flex-col justify-between min-h-[460px] max-h-[90vh]">
+          <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-3xl p-6 shadow-2xl relative flex flex-col justify-between max-h-[90vh]">
             
             {/* Header Modal */}
-            <div>
-              <div className="flex justify-between items-start border-b border-slate-800 pb-4">
-                <div>
-                  <span className="text-xs font-semibold px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
-                    หัวข้อที่ {currentSlideIndex + 1} / {KNOWLEDGE_SLIDES.length}
-                  </span>
-                  <h3 className="text-xl font-bold text-white mt-2">
-                    {KNOWLEDGE_SLIDES[currentSlideIndex].title}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    {KNOWLEDGE_SLIDES[currentSlideIndex].subtitle}
-                  </p>
-                </div>
-                <button 
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+            <div className="flex justify-between items-start border-b border-slate-800 pb-4">
+              <div>
+                <h3 className="text-xl font-bold text-white">
+                  {KNOWLEDGE_DETAILS[activeSystem].title}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {KNOWLEDGE_DETAILS[activeSystem].subtitle}
+                </p>
               </div>
-
-              {/* Body Content */}
-              <div className="py-2 overflow-y-auto max-h-[55vh]">
-                {KNOWLEDGE_SLIDES[currentSlideIndex].content}
-              </div>
+              <button 
+                onClick={() => setActiveSystem(null)}
+                className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            {/* Footer Navigation */}
-            <div className="flex justify-between items-center border-t border-slate-800 pt-4 mt-auto">
-              <button
-                disabled={currentSlideIndex === 0}
-                onClick={() => setCurrentSlideIndex(prev => prev - 1)}
-                className="flex items-center gap-1 text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" /> ย้อนกลับ
-              </button>
+            {/* Body Content */}
+            <div className="py-4 overflow-y-auto max-h-[60vh]">
+              {KNOWLEDGE_DETAILS[activeSystem].content}
+            </div>
 
-              <div className="flex gap-1.5">
-                {KNOWLEDGE_SLIDES.map((_, i) => (
-                  <span 
-                    key={i} 
-                    onClick={() => setCurrentSlideIndex(i)}
-                    className={`w-2.5 h-2.5 rounded-full cursor-pointer transition-all ${
-                      i === currentSlideIndex ? 'bg-emerald-400 w-6' : 'bg-slate-700 hover:bg-slate-500'
-                    }`}
-                  />
-                ))}
-              </div>
-
+            {/* Footer Modal */}
+            <div className="border-t border-slate-800 pt-3 flex justify-end">
               <button
-                disabled={currentSlideIndex === KNOWLEDGE_SLIDES.length - 1}
-                onClick={() => setCurrentSlideIndex(prev => prev + 1)}
-                className="flex items-center gap-1 text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                onClick={() => setActiveSystem(null)}
+                className="px-5 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition cursor-pointer"
               >
-                ถัดไป <ChevronRight className="w-4 h-4" />
+                ปิดหน้าต่าง
               </button>
             </div>
 
