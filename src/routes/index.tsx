@@ -345,7 +345,7 @@ function CleanEnergyPortal() {
           </div>
         </section>
 
-        {/* SECTION 2: KNOWLEDGE BASE */}
+        {/* SECTION 2: KNOWLEDGE BASE (การ์ดแยก 3 ระบบโซลาร์เซลล์) */}
         <section id="knowledge" className="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 space-y-6 scroll-mt-20">
           <div className="flex justify-between items-end">
             <div>
@@ -363,35 +363,40 @@ function CleanEnergyPortal() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* CARD 1: Off-Grid System */}
             <div 
               onClick={() => openSlideModal(1)}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
-              <span className="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-md">พื้นฐาน</span>
-              <h3 className="text-base font-semibold text-white group-hover:text-emerald-400 transition">หลักการทำงานของ 3 ระบบโซลาร์เซลล์</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">เปรียบเทียบและแผนผังการทำงานของ Off-Grid, On-Grid และ Hybrid</p>
-              <p className="text-xs text-emerald-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่ออ่านเพิ่มเติม →</p>
+              <span className="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-md">ระบบที่ 1</span>
+              <h3 className="text-base font-semibold text-white group-hover:text-emerald-400 transition">Off-Grid System (ระบบอิสระ)</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">ระบบที่ไม่เชื่อมต่อสายส่งการไฟฟ้า ผลิตไฟฟ้าจากโซลาร์เซลล์เก็บลงแบตเตอรี่ และจ่ายให้โหลดโดยตรง</p>
+              <p className="text-xs text-emerald-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่อดูรายละเอียด →</p>
             </div>
 
+            {/* CARD 2: On-Grid System */}
             <div 
-              onClick={() => openSlideModal(3)}
+              onClick={() => openSlideModal(1)}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
-              <span className="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-md">คู่มือ</span>
-              <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition">ขั้นตอนการเปิด-ปิด และการดูแลรักษา</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">ข้อควรระวังและการตรวจสอบความปลอดภัยก่อนและหลังการใช้งานระบบโซลาร์</p>
-              <p className="text-xs text-blue-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่ออ่านเพิ่มเติม →</p>
+              <span className="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-md">ระบบที่ 2</span>
+              <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition">On-Grid System (ระบบเชื่อมต่อสายส่ง)</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">ทำงานร่วมกับสายส่งการไฟฟ้าโดยตรง ไม่มีแบตเตอรี่ หากผลิตไม่พอจะดึงไฟหลวงมาเสริมอัตโนมัติ</p>
+              <p className="text-xs text-blue-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่อดูรายละเอียด →</p>
             </div>
 
+            {/* CARD 3: Hybrid System */}
             <div 
-              onClick={() => openSlideModal(4)}
+              onClick={() => openSlideModal(1)}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
-              <span className="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-md">สิ่งแวดล้อม</span>
-              <h3 className="text-base font-semibold text-white group-hover:text-purple-400 transition">สรุปผลการลด Carbon Footprint</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">เปลี่ยนพลังงานแสงอาทิตย์เป็นหน่วยลดการปล่อยก๊าซเรือนกระจก ($CO_2$ Avoided) โครงการลำปาง</p>
-              <p className="text-xs text-purple-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่ออ่านเพิ่มเติม →</p>
+              <span className="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-md">ระบบที่ 3</span>
+              <h3 className="text-base font-semibold text-white group-hover:text-purple-400 transition">Hybrid System (ระบบผสมผสาน)</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">รวมข้อดีของทั้ง 2 ระบบ มีแบตเตอรี่สำรองไฟและต่อกับสายส่ง ป้องกันปัญหาไฟตกไฟดับได้ 100%</p>
+              <p className="text-xs text-purple-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่อดูรายละเอียด →</p>
             </div>
+
           </div>
         </section>
 
