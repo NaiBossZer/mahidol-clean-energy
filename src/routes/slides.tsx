@@ -1,181 +1,179 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { Sun, BatteryCharging, Zap, Home, Info, ArrowRight } from 'lucide-react';
 
 export const Route = createFileRoute('/slides')({
-  component: SlidesPage,
-})
+  component: KnowledgeFlowPage,
+});
 
-function SlidesPage() {
+type SystemType = 'off-grid' | 'on-grid' | 'hybrid';
+
+function KnowledgeFlowPage() {
+  const [activeTab, setActiveTab] = useState<SystemType>('hybrid');
+
+  // ข้อมูลจำลองพลังงานของแต่ละระบบ
+  const systemData = {
+    'off-grid': {
+      title: '1. ระบบ Off-Grid (ระบบอิสระ)',
+      desc: 'ผลิตไฟฟ้าจากโซลาร์เซลล์เก็บลงแบตเตอรี่ และจ่ายให้โหลดโดยตรง ไม่มีการเชื่อมต่อกับสายส่งการไฟฟ้า เหมาะกับพื้นที่ห่างไกล',
+      pv: '2.500',
+      battery: '1.200',
+      grid: null, // ไม่มี Grid
+      load: '3.700',
+      hasGrid: false,
+      hasBattery: true,
+    },
+    'on-grid': {
+      title: '2. ระบบ On-Grid (ระบบเชื่อมต่อสายส่ง)',
+      desc: 'ผลิตไฟฟ้าทำงานร่วมกับสายส่งการไฟฟ้าโดยตรง ไม่มีแบตเตอรี่ หากผลิตเกินสามารถขายคืนได้ และหากไม่พอจะดึงไฟจาก Grid มาช่วย',
+      pv: '3.200',
+      battery: null, // ไม่มี Battery
+      grid: '0.500',
+      load: '3.700',
+      hasGrid: true,
+      hasBattery: false,
+    },
+    'hybrid': {
+      title: '3. ระบบ Hybrid (ระบบผสมผสาน)',
+      desc: 'รวมข้อดีของ On-Grid และ Off-Grid เข้าด้วยกัน มีทั้งการเชื่อมต่อ Grid และสำรองไฟในแบตเตอรี่ ป้องกันไฟตกไฟดับได้ 100%',
+      pv: '2.800',
+      battery: '0.600',
+      grid: '0.300',
+      load: '3.700',
+      hasGrid: true,
+      hasBattery: true,
+    },
+  };
+
+  const current = systemData[activeTab];
+
   return (
-    <div className="bg-slate-900 text-slate-100 min-h-screen p-6 flex flex-col items-center space-y-12 font-sans">
-      {/* SLIDE 1: Title */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl text-center space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 1</span>
-        <h1 class="text-3xl font-bold text-amber-400">ระบบผลิตไฟฟ้าด้วยพลังงานแสงอาทิตย์<br />(SOLAR CELLS SYSTEMS)</h1>
-        <p class="text-slate-400 text-sm">คณะสิ่งแวดล้อมและทรัพยากรศาสตร์ มหาวิทยาลัยมหิดล<br />(งานพันธกิจเพื่อสังคม อ.สบปราบ จ.ลำปาง)</p>
-      </section>
-
-      {/* SLIDE 2: Contents */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 2</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">หัวข้อการนำเสนอ</h2>
-        <ol class="list-decimal list-inside space-y-2 text-slate-300">
-          <li>ข้อมูลพื้นฐานระบบผลิตไฟฟ้าจากเซลล์แสงอาทิตย์ (Solar Systems)</li>
-          <li>การติดตั้งระบบผลิตไฟฟ้าฯ ภายในโครงการ (Off-Grid / On-Grid / Hybrid)</li>
-          <li>การใช้งานและการติดตามผล (Monitoring)</li>
-          <li>การบำรุงรักษาระบบ (Maintenance)</li>
-          <li>สรุปผลการใช้ไฟฟ้าและโซลาร์เซลล์ งานพันธกิจเพื่อสังคม (ลำปาง)</li>
-        </ol>
-      </section>
-
-      {/* SLIDE 3: Types */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 3</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">ประเภทของระบบ Solar Systems</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-amber-400">1. Off-Grid System</h3>
-            <p class="text-sm text-slate-300 mt-1">ระบบอิสระ ไม่เชื่อมต่อการไฟฟ้า</p>
-          </div>
-          <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-amber-400">2. On-Grid System</h3>
-            <p class="text-sm text-slate-300 mt-1">ระบบเชื่อมต่อสายส่งการไฟฟ้า</p>
-          </div>
-          <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-amber-400">3. Hybrid System</h3>
-            <p class="text-sm text-slate-300 mt-1">ระบบผสมผสาน มีแบตเตอรี่และเชื่อมต่อสายส่ง</p>
-          </div>
+    <div className="bg-slate-950 min-h-screen text-slate-100 p-4 md:p-8 font-sans">
+      <div className="max-w-4xl mx-auto space-y-8">
+        
+        {/* Header Section */}
+        <div className="text-center space-y-2">
+          <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs px-3 py-1 rounded-full font-medium">
+            Knowledge Base
+          </span>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white">
+            แผนผังแสดงการไหลของพลังงาน (Solar Flow Diagram)
+          </h1>
+          <p className="text-xs md:text-sm text-slate-400">
+            เปรียบเทียบการทำงานของระบบโซลาร์เซลล์ทั้ง 3 รูปแบบ
+          </p>
         </div>
-      </section>
 
-      {/* SLIDE 4: Off-Grid */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 4</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">ระบบผลิตไฟฟ้าแบบ OFF-GRID SYSTEM</h2>
-        <p class="text-xs text-amber-400/80 font-mono">FLOW: PV Module → Battery / Inverter → Breaker → Home / Green House</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="bg-emerald-950/30 border border-emerald-800/50 p-4 rounded-xl">
-            <h3 class="font-bold text-emerald-400 mb-2">ข้อดี</h3>
-            <ul class="list-disc list-inside space-y-1 text-slate-300">
-              <li>ไม่มีปัญหาไฟตก/ไฟดับ (ผลิตไฟฟ้าได้อย่างอิสระ)</li>
-              <li>ไม่ต้องจ่ายค่าไฟฟ้าให้การไฟฟ้า</li>
-            </ul>
-          </div>
-          <div class="bg-rose-950/30 border border-rose-800/50 p-4 rounded-xl">
-            <h3 class="font-bold text-rose-400 mb-2">ข้อเสีย</h3>
-            <ul class="list-disc list-inside space-y-1 text-slate-300">
-              <li>อาจไม่คุ้มทุนเนื่องจากแบตเตอรี่มีราคาสูง</li>
-              <li>มักมีปัญหาช่วงหน้าฝน หากแสงแดดไม่เพียงพอ</li>
-            </ul>
-          </div>
+        {/* Tab Selection */}
+        <div className="flex justify-center p-1.5 bg-slate-900 border border-slate-800 rounded-2xl max-w-md mx-auto">
+          <button
+            onClick={() => setActiveTab('off-grid')}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition ${
+              activeTab === 'off-grid'
+                ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            OFF-GRID
+          </button>
+          <button
+            onClick={() => setActiveTab('on-grid')}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition ${
+              activeTab === 'on-grid'
+                ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            ON-GRID
+          </button>
+          <button
+            onClick={() => setActiveTab('hybrid')}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition ${
+              activeTab === 'hybrid'
+                ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            HYBRID
+          </button>
         </div>
-      </section>
 
-      {/* SLIDE 5: On-Grid */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 5</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">ระบบผลิตไฟฟ้าแบบ ON-GRID SYSTEM</h2>
-        <p class="text-xs text-amber-400/80 font-mono">FLOW: Solar Cell + Grid Meter → Inverter → Breaker → Home</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="bg-emerald-950/30 border border-emerald-800/50 p-4 rounded-xl">
-            <h3 class="font-bold text-emerald-400 mb-2">ข้อดี</h3>
-            <ul class="list-disc list-inside space-y-1 text-slate-300">
-              <li>ดึงไฟจากการไฟฟ้ามาช่วยทันทีเมื่อโซลาร์เซลล์ผลิตไม่พอ</li>
-              <li>ไม่ต้องใช้แบตเตอรี่ ทำให้คืนทุนได้เร็ว</li>
-            </ul>
-          </div>
-          <div class="bg-rose-950/30 border border-rose-800/50 p-4 rounded-xl">
-            <h3 class="font-bold text-rose-400 mb-2">ข้อเสีย</h3>
-            <ul class="list-disc list-inside space-y-1 text-slate-300">
-              <li>หากไฟจากการไฟฟ้าดับ ระบบโซลาร์เซลล์จะดับด้วย</li>
-              <li>ผลิตพลังงานได้เฉพาะช่วงเวลากลางวันที่มีแสงแดด</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SLIDE 6: Hybrid */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 6</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">ระบบผลิตไฟฟ้าแบบ HYBRID SYSTEM</h2>
-        <p class="text-xs text-amber-400/80 font-mono">FLOW: Solar Cell + Battery + Grid Meter → Inverter → Breaker → Home</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="bg-emerald-950/30 border border-emerald-800/50 p-4 rounded-xl">
-            <h3 class="font-bold text-emerald-400 mb-2">ข้อดี</h3>
-            <ul class="list-disc list-inside space-y-1 text-slate-300">
-              <li>ใช้งานได้ตลอดเวลา (ไฟดับดึงจากแบตฯ / ผลิตไม่พอดึงจาก กฟภ.)</li>
-              <li>ปรับแต่งการจ่ายไฟให้เหมาะกับพฤติกรรมการใช้ไฟฟ้าได้</li>
-            </ul>
-          </div>
-          <div class="bg-rose-950/30 border border-rose-800/50 p-4 rounded-xl">
-            <h3 class="font-bold text-rose-400 mb-2">ข้อเสีย</h3>
-            <ul class="list-disc list-inside space-y-1 text-slate-300">
-              <li>แบตเตอรี่และอุปกรณ์ราคาสูง</li>
-              <li>อุปกรณ์ซับซ้อน และต้องใช้อินเวอร์เตอร์ที่ผ่านเกณฑ์ กฟภ.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SLIDE 7: Operations */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 7</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">ขั้นตอนการเปิด-ปิด ระบบ</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="bg-slate-700/40 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-amber-400 mb-2">ขั้นตอนการเปิด (ON System)</h3>
-            <ol class="list-decimal list-inside space-y-1 text-slate-300">
-              <li><strong>ON ตู้ SMDB:</strong> เปิด MCCB และ MCB (ตู้ MBD)</li>
-              <li><strong>ON ตู้ Solar DC Panel:</strong> เปิด CB แต่ละตัว</li>
-              <li><strong>ON สวิตช์ Inverter:</strong> หมุนเปิดสวิตช์ Inverter แต่ละตัว</li>
-            </ol>
-          </div>
-          <div class="bg-slate-700/40 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-slate-400 mb-2">ขั้นตอนการปิด (OFF System)</h3>
-            <p class="text-slate-300 leading-relaxed">ให้ดำเนินการย้อนลำดับขั้นตอนการเปิด:<br /><span class="text-amber-400 font-mono text-xs">OFF ตู้ Solar DC → OFF Inverter → OFF ตู้ SMDB</span></p>
-          </div>
-        </div>
-      </section>
-
-      {/* SLIDE 8: Monitoring */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 8</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">การติดตามผลการทำงาน (Monitoring)</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="bg-slate-700/40 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-amber-400 mb-1">Mobile Application</h3>
-            <p class="text-slate-300">ตรวจสอบข้อมูล Real-time, สถานะการทำงานของ Inverter/Battery และปริมาณไฟฟ้าที่ผลิตได้</p>
-          </div>
-          <div class="bg-slate-700/40 p-4 rounded-xl border border-slate-600">
-            <h3 class="font-bold text-amber-400 mb-1">Web Management Platform</h3>
-            <p class="text-slate-300">วิเคราะห์ข้อมูลเชิงลึก รายวัน รายเดือน รายปี และรายงานผลการลดการปล่อยก๊าซคาร์บอน</p>
-          </div>
-        </div>
-      </section>
-
-      {/* SLIDE 9: Summary */}
-      <section class="w-full max-w-4xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-4">
-        <span class="bg-amber-500/10 text-amber-400 text-sm font-semibold px-4 py-1.5 rounded-full border border-amber-500/20">Slide 9</span>
-        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2">สรุปผลการใช้พลังงานไฟฟ้า (สบปราบ-ผาลาด จ.ลำปาง)</h2>
-        <div class="text-sm text-slate-300 space-y-2">
-          <p><strong>ขนาดการติดตั้ง:</strong> 12.6 kWp (รวมของเดิมเป็น 18 kWp)</p>
-          <div class="grid grid-cols-2 gap-4 my-3 text-center">
-            <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
-              <span class="block text-xs text-slate-400">ไฟฟ้าจาก กฟภ.</span>
-              <span class="text-xl font-bold text-rose-400">29.8%</span>
-              <span class="block text-xs text-slate-400">(4,040.80 หน่วย)</span>
+        {/* Flow Diagram Card */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md">
+          
+          {/* Diagram Display */}
+          <div className="relative w-full max-w-lg mx-auto h-[380px] flex items-center justify-center">
+            
+            {/* Top Node: PV (Solar) */}
+            <div className="absolute top-0 flex flex-col items-center">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-amber-400/80 bg-slate-950 flex flex-col items-center justify-center shadow-lg shadow-amber-500/10">
+                <Sun className="w-7 h-7 text-amber-400 animate-spin-slow" />
+                <span className="text-xs md:text-sm font-bold text-white mt-1">{current.pv}</span>
+                <span className="text-[10px] text-slate-400">kW</span>
+              </div>
+              <span className="text-xs font-semibold text-slate-300 mt-1">PV</span>
             </div>
-            <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
-              <span class="block text-xs text-slate-400">ไฟฟ้าจาก Solar Cell</span>
-              <span class="text-xl font-bold text-emerald-400">70.2%</span>
-              <span class="block text-xs text-slate-400">(9,523.47 หน่วย)</span>
+
+            {/* Left Node: Battery */}
+            <div className={`absolute left-0 flex flex-col items-center transition-opacity duration-300 ${!current.hasBattery ? 'opacity-20 grayscale' : 'opacity-100'}`}>
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-emerald-400/80 bg-slate-950 flex flex-col items-center justify-center shadow-lg shadow-emerald-500/10">
+                <BatteryCharging className="w-7 h-7 text-emerald-400" />
+                <span className="text-xs md:text-sm font-bold text-white mt-1">{current.battery || '0.000'}</span>
+                <span className="text-[10px] text-slate-400">kW</span>
+              </div>
+              <span className="text-xs font-semibold text-slate-300 mt-1">Battery</span>
+            </div>
+
+            {/* Right Node: Grid */}
+            <div className={`absolute right-0 flex flex-col items-center transition-opacity duration-300 ${!current.hasGrid ? 'opacity-20 grayscale' : 'opacity-100'}`}>
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-purple-400/80 bg-slate-950 flex flex-col items-center justify-center shadow-lg shadow-purple-500/10">
+                <Zap className="w-7 h-7 text-purple-400" />
+                <span className="text-xs md:text-sm font-bold text-white mt-1">{current.grid || '0.000'}</span>
+                <span className="text-[10px] text-slate-400">kW</span>
+              </div>
+              <span className="text-xs font-semibold text-slate-300 mt-1">Grid</span>
+            </div>
+
+            {/* Bottom Node: Load (House) */}
+            <div className="absolute bottom-0 flex flex-col items-center">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-sky-400/80 bg-slate-950 flex flex-col items-center justify-center shadow-lg shadow-sky-500/10">
+                <Home className="w-7 h-7 text-sky-400" />
+                <span className="text-xs md:text-sm font-bold text-white mt-1">{current.load}</span>
+                <span className="text-[10px] text-slate-400">kW</span>
+              </div>
+              <span className="text-xs font-semibold text-slate-300 mt-1">Load</span>
+            </div>
+
+            {/* SVG Connecting Lines with Animation */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 380">
+              {/* PV to Load (Vertical Line) */}
+              <line x1="200" y1="90" x2="200" y2="290" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 4" className="animate-pulse" />
+
+              {/* Battery to Center (Left Line) */}
+              {current.hasBattery && (
+                <path d="M 90 190 Q 150 190 200 210" fill="none" stroke="#10b981" strokeWidth="2" strokeDasharray="4 4" className="animate-pulse" />
+              )}
+
+              {/* Grid to Center (Right Line) */}
+              {current.hasGrid && (
+                <path d="M 310 190 Q 250 190 200 210" fill="none" stroke="#c084fc" strokeWidth="2" strokeDasharray="4 4" className="animate-pulse" />
+              )}
+            </svg>
+
+          </div>
+
+          {/* Description Section */}
+          <div className="mt-8 bg-slate-950/60 border border-slate-800 rounded-2xl p-4 md:p-5 flex gap-3 items-start">
+            <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-amber-400">{current.title}</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">{current.desc}</p>
             </div>
           </div>
-          <ul class="list-disc list-inside space-y-1 text-slate-300">
-            <li>ลดค่าไฟฟ้าของโครงการลงอย่างต่อเนื่องตั้งแต่ปี 2566 ถึง 2569</li>
-            <li>ช่วยลดการปล่อยก๊าซเรือนกระจก (CO₂) และลดการใช้ถ่านหินในการผลิตไฟฟ้า</li>
-          </ul>
+
         </div>
-      </section>
+
+      </div>
     </div>
-  )
+  );
 }
