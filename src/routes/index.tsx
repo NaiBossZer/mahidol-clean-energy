@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { 
-  BookOpen, LineChart, BatteryCharging, ClipboardEdit, LayoutDashboard, 
-  ArrowLeft, ExternalLink, X, ChevronLeft, ChevronRight, Zap, CheckCircle2, ShieldAlert, Sparkles
+  BookOpen, LineChart, LayoutDashboard, ArrowLeft, X, 
+  ChevronLeft, ChevronRight, Zap, CheckCircle2, ShieldAlert, Sparkles
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -150,37 +150,40 @@ function CleanEnergyPortal() {
             <span>Mahidol Clean Energy</span>
           </div>
           
-          <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm">
+          {/* เมนูแบบกล่องสีเขียว */}
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm font-medium">
             <button 
               onClick={() => scrollToSection('dashboard')}
-              className="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer"
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition cursor-pointer shadow-md shadow-emerald-500/20 active:scale-95"
             >
               Dashboard
             </button>
             <button 
               onClick={() => scrollToSection('knowledge')}
-              className="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer"
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition cursor-pointer shadow-md shadow-emerald-500/20 active:scale-95"
             >
               คลังความรู้
             </button>
             <button 
               onClick={() => scrollToSection('stats')}
-              className="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer"
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition cursor-pointer shadow-md shadow-emerald-500/20 active:scale-95"
             >
               สถิติการผลิต
             </button>
-            <button 
-              onClick={() => scrollToSection('ev')}
-              className="px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer"
+
+            {/* ลิงก์ไปยังโฟลเดอร์/หน้าอื่น */}
+            <Link 
+              to="/ev" 
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition cursor-pointer shadow-md shadow-emerald-500/20 active:scale-95 inline-block"
             >
               จอง EV
-            </button>
-            <button 
-              onClick={() => scrollToSection('survey')}
-              className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition cursor-pointer shadow-md shadow-emerald-500/20"
+            </Link>
+            <Link 
+              to="/survey" 
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition cursor-pointer shadow-md shadow-emerald-500/20 active:scale-95 inline-block"
             >
               แบบประเมิน
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -217,7 +220,7 @@ function CleanEnergyPortal() {
           </div>
         </section>
 
-        {/* SECTION 2: KNOWLEDGE BASE (รวมไว้ในหน้าหลัก ไม่แยก Tab) */}
+        {/* SECTION 2: KNOWLEDGE BASE */}
         <section id="knowledge" className="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 space-y-6 scroll-mt-20">
           <div className="flex justify-between items-end">
             <div>
@@ -285,63 +288,9 @@ function CleanEnergyPortal() {
           </div>
         </section>
 
-        {/* SECTION 4 & 5: EV RESERVATION & SURVEY */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
-          {/* EV Booking */}
-          <section id="ev" className="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 space-y-6 scroll-mt-20">
-            <h2 className="text-xl font-bold flex items-center gap-2 text-amber-400">
-              <BatteryCharging className="w-6 h-6" /> จองคิวชาร์จ EV
-            </h2>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">เลือกสถานีชาร์จ</label>
-                <select className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-                  <option>สถานีสบปราบ (18 kWp AC Type 2)</option>
-                  <option>สถานีผาลาด (DC Fast Charger)</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">วันที่</label>
-                  <input type="date" className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">เวลา</label>
-                  <input type="time" className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500" />
-                </div>
-              </div>
-              <button className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/20 cursor-pointer text-sm">
-                ยืนยันการจองคิว
-              </button>
-            </form>
-          </section>
-
-          {/* Survey */}
-          <section id="survey" className="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 space-y-6 flex flex-col justify-between scroll-mt-20">
-            <div>
-              <h2 className="text-xl font-bold flex items-center gap-2 text-purple-400 mb-4">
-                <ClipboardEdit className="w-6 h-6" /> แบบประเมินความพึงพอใจ
-              </h2>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                ขอเชิญร่วมตอบแบบประเมินความพึงพอใจในการใช้งานระบบพลังงานสะอาดและสถานีชาร์จ EV ของมหาวิทยาลัยมหิดล เพื่อนำข้อมูลไปปรับปรุงและพัฒนาประสิทธิภาพการบริการในอนาคต
-              </p>
-            </div>
-            <a 
-              href="https://forms.gle" 
-              target="_blank" 
-              rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition shadow-lg shadow-purple-600/30 cursor-pointer w-full text-center"
-            >
-              ทำแบบสอบถาม (Google Forms) <ExternalLink className="w-4 h-4" />
-            </a>
-          </section>
-
-        </div>
-
       </div>
 
-      {/* --- MODAL READ SLIDES (ส่วนป๊อปอัปสไลด์อ่านคลังความรู้) --- */}
+      {/* --- MODAL READ SLIDES --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-3xl p-6 shadow-2xl relative flex flex-col justify-between min-h-[420px]">

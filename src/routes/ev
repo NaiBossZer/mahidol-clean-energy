@@ -1,0 +1,40 @@
+// src/routes/ev.tsx
+
+// ... โค้ดส่วนอื่นๆ ...
+
+function EVBookingPage() {
+  const [station, setStation] = useState('สถานีสบปราบ (18 kWp AC Type 2)');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  // ใส่ Web App URL ของคุณตรงนี้แล้ว
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQsVhjSN6t81B1Isb5FPDQxm2sEU2g0ZzN8VgnULPENDMOqcaJNH5JTqVbK-5L8c1fWw/exec";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ station, date, time, email }),
+      });
+
+      setSuccess(true);
+      setDate('');
+      setTime('');
+      setEmail('');
+    } catch (error) {
+      alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ... โค้ดส่วน JSX แสดงผลแบบฟอร์ม ...
+}
