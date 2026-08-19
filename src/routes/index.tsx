@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { 
   BookOpen, LineChart, LayoutDashboard, ArrowLeft, X, 
   ChevronLeft, ChevronRight, Zap, CheckCircle2, ShieldAlert, Sparkles,
-  Sun, BatteryCharging, Home
+  Sun, BatteryCharging, Home, Check, AlertTriangle, Cpu
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -29,7 +29,6 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
 
   return (
     <div className="relative w-full aspect-[16/9] max-w-md mx-auto my-2 bg-slate-950/60 rounded-2xl border border-slate-800 p-2 overflow-hidden">
-      {/* CSS Animation สำหรับเส้นไฟวิ่ง */}
       <style>{`
         @keyframes dashFlow {
           to { stroke-dashoffset: -20; }
@@ -40,12 +39,9 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
         }
       `}</style>
 
-      {/* SVG canvas สำหรับวาดเส้น Flow */}
       <svg className="absolute inset-0 w-full h-full z-0" viewBox="0 0 300 180">
-        {/* PV -> Load (มีทุกระบบ) */}
         <line x1="150" y1="45" x2="150" y2="135" stroke="#f59e0b" strokeWidth="2.5" className="flow-line-active" />
         
-        {/* Battery -> Load */}
         <line 
           x1="65" y1="90" x2="150" y2="135" 
           stroke={isOffGrid || isHybrid ? "#10b981" : "#334155"} 
@@ -53,7 +49,6 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
           className={isOffGrid || isHybrid ? "flow-line-active" : ""} 
         />
         
-        {/* Grid -> Load */}
         <line 
           x1="235" y1="90" x2="150" y2="135" 
           stroke={isOnGrid || isHybrid ? "#a855f7" : "#334155"} 
@@ -62,10 +57,7 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
         />
       </svg>
 
-      {/* Nodes ตำแหน่งอุปกรณ์ต่าง ๆ */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between items-center py-1">
-        
-        {/* TOP: PV */}
         <div className="flex flex-col items-center">
           <div className="w-10 h-10 rounded-full border-2 border-amber-400 bg-slate-900 flex items-center justify-center shadow-lg shadow-amber-500/20">
             <Sun className="w-5 h-5 text-amber-400" />
@@ -73,9 +65,7 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
           <span className="text-[10px] font-bold text-amber-400 mt-0.5">PV (แผงโซลาร์)</span>
         </div>
 
-        {/* MIDDLE: Battery & Grid */}
         <div className="w-full flex justify-between px-4 my-auto">
-          {/* Battery Node */}
           <div className={`flex flex-col items-center transition-opacity ${isOnGrid ? 'opacity-30' : 'opacity-100'}`}>
             <div className={`w-10 h-10 rounded-full border-2 bg-slate-900 flex items-center justify-center shadow-lg ${
               isOffGrid || isHybrid ? 'border-emerald-400 shadow-emerald-500/20' : 'border-slate-700'
@@ -87,7 +77,6 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
             </span>
           </div>
 
-          {/* Grid Node */}
           <div className={`flex flex-col items-center transition-opacity ${isOffGrid ? 'opacity-30' : 'opacity-100'}`}>
             <div className={`w-10 h-10 rounded-full border-2 bg-slate-900 flex items-center justify-center shadow-lg ${
               isOnGrid || isHybrid ? 'border-purple-400 shadow-purple-500/20' : 'border-slate-700'
@@ -100,85 +89,115 @@ function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
           </div>
         </div>
 
-        {/* BOTTOM: Load */}
         <div className="flex flex-col items-center">
           <div className="w-10 h-10 rounded-full border-2 border-sky-400 bg-slate-900 flex items-center justify-center shadow-lg shadow-sky-500/20">
             <Home className="w-5 h-5 text-sky-400" />
           </div>
           <span className="text-[10px] font-bold text-sky-400 mt-0.5">Load (เครื่องใช้ไฟฟ้า)</span>
         </div>
-
       </div>
     </div>
   );
 }
 
-// ข้อมูลเนื้อหาสำหรับ Modal สไลด์คลังความรู้
+// 📚 ข้อมูลสไลด์คลังความรู้แบบแยกเจาะลึกเฉพาะเรื่อง
 const KNOWLEDGE_SLIDES = [
+  // 0: ภาพรวม
   {
-    title: "ระบบผลิตไฟฟ้าด้วยพลังงานแสงอาทิตย์ (SOLAR CELLS SYSTEMS)",
-    subtitle: "คณะสิ่งแวดล้อมและทรัพยากรศาสตร์ มหาวิทยาลัยมหิดล (งานพันธกิจเพื่อสังคม อ.สบปราบ จ.ลำปาง)",
+    title: "ภาพรวมระบบโซลาร์เซลล์ มหาวิทยาลัยมหิดล",
+    subtitle: "งานพันธกิจเพื่อสังคม อ.สบปราบ จ.ลำปาง",
     content: (
-      <div className="space-y-4 text-center py-6">
+      <div className="space-y-4 text-center py-4">
         <div className="inline-block p-4 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400 mb-2">
           <Zap className="w-12 h-12" />
         </div>
         <h3 className="text-2xl font-bold text-amber-400">คลังความรู้ระบบพลังงานสะอาด</h3>
         <p className="text-slate-300 max-w-lg mx-auto text-sm leading-relaxed">
-          องค์ความรู้การใช้งาน การบำรุงรักษา และสรุปผลการใช้ไฟฟ้าจากโซลาร์เซลล์ ของมหาวิทยาลัยมหิดล เพื่อการจัดการพลังงานอย่างยั่งยืน
+          องค์ความรู้การใช้งาน การบำรุงรักษา และหลักการทำงานของระบบโซลาร์เซลล์ทั้ง 3 รูปแบบ เพื่อการจัดการพลังงานอย่างยั่งยืน
         </p>
       </div>
     )
   },
+  // 1: เจาะลึก Off-Grid
   {
-    title: "ประเภทของระบบ Solar Systems",
-    subtitle: "รูปแบบการติดตั้งและหลักการทำงานพื้นฐาน (3 ระบบ)",
+    title: "Off-Grid System (ระบบอิสระ)",
+    subtitle: "เจาะลึกระบบสแตนด์อโลน ไม่พึ่งสายส่งการไฟฟ้า",
     content: (
-      <div className="space-y-4 py-2 max-h-[50vh] overflow-y-auto pr-1">
-        
-        {/* ข้อที่ 1: OFF-GRID */}
-        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-2">
-          <h4 className="font-bold text-amber-400 text-base">1. Off-Grid System (ระบบอิสระ)</h4>
-          <p className="text-xs text-slate-300">
-            ระบบอิสระ ไม่เชื่อมต่อสายส่งการไฟฟ้า มีแบตเตอรี่กักเก็บพลังงานไว้ใช้เอง เหมาะกับพื้นที่ห่างไกล
+      <div className="space-y-4 text-xs">
+        <SolarFlowDiagram type="OFFGRID" />
+        <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 space-y-2">
+          <h4 className="font-bold text-emerald-400 text-sm flex items-center gap-1.5">
+            <Cpu className="w-4 h-4" /> หลักการทำงาน & อุปกรณ์หลัก
+          </h4>
+          <p className="text-slate-300 leading-relaxed">
+            ผลิตไฟฟ้าจากแผง PV ผ่าน Charge Controller ชาร์จเข้าแบตเตอรี่ และแปลงเป็นไฟบ้านด้วย Off-Grid Inverter เหมาะกับพื้นที่ห่างไกลที่ไฟฟ้าเข้าไม่ถึง
           </p>
-          <SolarFlowDiagram type="OFFGRID" />
         </div>
-
-        {/* ข้อที่ 2: ON-GRID */}
-        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-2">
-          <h4 className="font-bold text-amber-400 text-base">2. On-Grid System (ระบบเชื่อมต่อสายส่ง)</h4>
-          <p className="text-xs text-slate-300">
-            ระบบเชื่อมต่อสายส่งการไฟฟ้า ดึงไฟหลวงมาเสริมทันทีเมื่อผลิตไม่พอ คืนทุนไว ไม่มีแบตเตอรี่
-          </p>
-          <SolarFlowDiagram type="ONGRID" />
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-emerald-950/40 p-3 rounded-xl border border-emerald-800/50">
+            <span className="font-bold text-emerald-400 flex items-center gap-1 mb-1"><Check className="w-3.5 h-3.5" /> ข้อดี</span>
+            <p className="text-slate-300">เป็นอิสระ 100% ไฟไม่ดับตามการไฟฟ้า เหมาะกับพื้นที่ห่างไกล</p>
+          </div>
+          <div className="bg-rose-950/40 p-3 rounded-xl border border-rose-800/50">
+            <span className="font-bold text-rose-400 flex items-center gap-1 mb-1"><AlertTriangle className="w-3.5 h-3.5" /> ข้อจำกัด</span>
+            <p className="text-slate-300">ต้นทุนแบตเตอรี่สูง ต้องเปลี่ยนตามอายุงาน และเสี่ยงไฟหมดช่วงฝนตกชื้น</p>
+          </div>
         </div>
-
-        {/* ข้อที่ 3: HYBRID */}
-        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-2">
-          <h4 className="font-bold text-amber-400 text-base">3. Hybrid System (ระบบผสมผสาน)</h4>
-          <p className="text-xs text-slate-300">
-            ระบบผสมผสาน มีทั้งแบตเตอรี่กักเก็บและเชื่อมต่อสายส่ง ป้องกันปัญหาไฟตกไฟดับได้ 100%
-          </p>
-          <SolarFlowDiagram type="HYBRID" />
-        </div>
-
       </div>
     )
   },
+  // 2: เจาะลึก On-Grid
   {
-    title: "เปรียบเทียบข้อดี-ข้อเสียของแต่ละระบบ",
-    subtitle: "ข้อมูลประกอบการตัดสินใจติดตั้ง",
+    title: "On-Grid System (ระบบเชื่อมต่อสายส่ง)",
+    subtitle: "เจาะลึกระบบเน้นประหยัดค่าไฟ คืนทุนไวที่สุด",
     content: (
-      <div className="space-y-3 text-xs">
-        <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-          <span className="font-bold text-amber-400">Off-Grid:</span> ไม่มีปัญหาไฟดับจากส่วนกลาง แต่ต้นทุนแบตเตอรี่สูงและเสี่ยงไฟไม่พอช่วงฝนตก
+      <div className="space-y-4 text-xs">
+        <SolarFlowDiagram type="ONGRID" />
+        <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 space-y-2">
+          <h4 className="font-bold text-purple-400 text-sm flex items-center gap-1.5">
+            <Cpu className="w-4 h-4" /> หลักการทำงาน & อุปกรณ์หลัก
+          </h4>
+          <p className="text-slate-300 leading-relaxed">
+            ผลิตไฟฟ้าใช้ร่วมกับการไฟฟ้าโดยตรงผ่าน On-Grid Inverter หากผลิตเกินสามารถขายคืนการไฟฟ้าได้ (ตามโครงการ) หากผลิตไม่พอระบบจะดึงไฟหลวงมาช่วยทันที
+          </p>
         </div>
-        <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-          <span className="font-bold text-amber-400">On-Grid:</span> คืนทุนไวที่สุดเนื่องจากไม่ต้องใช้แบตเตอรี่ แต่หากไฟการไฟฟ้าดับ ระบบจะดับด้วย
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-emerald-950/40 p-3 rounded-xl border border-emerald-800/50">
+            <span className="font-bold text-emerald-400 flex items-center gap-1 mb-1"><Check className="w-3.5 h-3.5" /> ข้อดี</span>
+            <p className="text-slate-300">ลงทุนต่ำสุด คืนทุนไวสุด ไม่มีค่าแบตเตอรี่ ดูแลรักษาง่าย</p>
+          </div>
+          <div className="bg-rose-950/40 p-3 rounded-xl border border-rose-800/50">
+            <span className="font-bold text-rose-400 flex items-center gap-1 mb-1"><AlertTriangle className="w-3.5 h-3.5" /> ข้อจำกัด</span>
+            <p className="text-slate-300">หากการไฟฟ้าตัดไฟ ระบบจะดับทันทีเพื่อความปลอดภัยของช่างไฟ</p>
+          </div>
         </div>
-        <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-          <span className="font-bold text-amber-400">Hybrid:</span> ยืดหยุ่นสูงสุด ใช้ได้แม้ไฟดับ แต่ระบบมีความซับซ้อนและอุปกรณ์ราคาสูง
+      </div>
+    )
+  },
+  // 3: เจาะลึก Hybrid
+  {
+    title: "Hybrid System (ระบบผสมผสาน)",
+    subtitle: "เจาะลึกระบบอัจฉริยะ เสถียรภาพสูงสุด",
+    content: (
+      <div className="space-y-4 text-xs">
+        <SolarFlowDiagram type="HYBRID" />
+        <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 space-y-2">
+          <h4 className="font-bold text-blue-400 text-sm flex items-center gap-1.5">
+            <Cpu className="w-4 h-4" /> หลักการทำงาน & อุปกรณ์หลัก
+          </h4>
+          <p className="text-slate-300 leading-relaxed">
+            ดึงข้อดีของ On-Grid และ Off-Grid มารวมกัน มีแบตเตอรี่สำรองไฟเมื่อไฟตก/ดับ และดึงไฟหลวงมาเสริมเมื่อแบตเตอรี่หมด ควบคุมด้วย Hybrid Inverter
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-emerald-950/40 p-3 rounded-xl border border-emerald-800/50">
+            <span className="font-bold text-emerald-400 flex items-center gap-1 mb-1"><Check className="w-3.5 h-3.5" /> ข้อดี</span>
+            <p className="text-slate-300">เสถียรภาพสูงสุด มีไฟสำรองใช้ตลอด 24 ชม. แม้ไฟฟ้าดับ</p>
+          </div>
+          <div className="bg-rose-950/40 p-3 rounded-xl border border-rose-800/50">
+            <span className="font-bold text-rose-400 flex items-center gap-1 mb-1"><AlertTriangle className="w-3.5 h-3.5" /> ข้อจำกัด</span>
+            <p className="text-slate-300">ราคาสูงที่สุด และต้องการการตั้งค่าระบบที่ซับซ้อนกว่า</p>
+          </div>
         </div>
       </div>
     )
@@ -287,13 +306,13 @@ function CleanEnergyPortal() {
               <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-emerald-400">
                 <BookOpen className="w-6 h-6" /> คลังความรู้ระบบโซลาร์เซลล์
               </h2>
-              <p className="text-xs text-slate-400 mt-1">คลิกที่การ์ดเพื่อเปิดอ่านบทเรียนสไลด์เต็ม</p>
+              <p className="text-xs text-slate-400 mt-1">คลิกที่การ์ดเพื่อเปิดอ่านความรู้เจาะลึกเฉพาะระบบ</p>
             </div>
             <button 
               onClick={() => openSlideModal(0)} 
               className="text-xs text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer font-medium"
             >
-              <Sparkles className="w-3.5 h-3.5" /> เริ่มอ่านตั้งแต่สไลด์แรก
+              <Sparkles className="w-3.5 h-3.5" /> อ่านสไลด์บทนำ
             </button>
           </div>
 
@@ -312,7 +331,7 @@ function CleanEnergyPortal() {
 
             {/* CARD 2: On-Grid System */}
             <div 
-              onClick={() => openSlideModal(1)}
+              onClick={() => openSlideModal(2)}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
               <span className="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-md">ระบบที่ 2</span>
@@ -323,7 +342,7 @@ function CleanEnergyPortal() {
 
             {/* CARD 3: Hybrid System */}
             <div 
-              onClick={() => openSlideModal(1)}
+              onClick={() => openSlideModal(3)}
               className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
               <span className="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-md">ระบบที่ 3</span>
@@ -365,7 +384,7 @@ function CleanEnergyPortal() {
               <div className="flex justify-between items-start border-b border-slate-800 pb-4">
                 <div>
                   <span className="text-xs font-semibold px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
-                    สไลด์ที่ {currentSlideIndex + 1} / {KNOWLEDGE_SLIDES.length}
+                    หัวข้อที่ {currentSlideIndex + 1} / {KNOWLEDGE_SLIDES.length}
                   </span>
                   <h3 className="text-xl font-bold text-white mt-2">
                     {KNOWLEDGE_SLIDES[currentSlideIndex].title}
@@ -383,7 +402,7 @@ function CleanEnergyPortal() {
               </div>
 
               {/* Body Content */}
-              <div className="py-4">
+              <div className="py-2 overflow-y-auto max-h-[55vh]">
                 {KNOWLEDGE_SLIDES[currentSlideIndex].content}
               </div>
             </div>
