@@ -21,6 +21,98 @@ const productionData = [
   { month: 'มิ.ย.', solar: 2700, grid: 1300 },
 ];
 
+// คอมโพเนนต์วาด Diagram Flow พลังงาน (SVG Flow)
+function SolarFlowDiagram({ type }: { type: 'OFFGRID' | 'ONGRID' | 'HYBRID' }) {
+  const isOffGrid = type === 'OFFGRID';
+  const isOnGrid = type === 'ONGRID';
+  const isHybrid = type === 'HYBRID';
+
+  return (
+    <div className="relative w-full aspect-[16/9] max-w-md mx-auto my-2 bg-slate-950/60 rounded-2xl border border-slate-800 p-2 overflow-hidden">
+      {/* CSS Animation สำหรับเส้นไฟวิ่ง */}
+      <style>{`
+        @keyframes dashFlow {
+          to { stroke-dashoffset: -20; }
+        }
+        .flow-line-active {
+          stroke-dasharray: 6 4;
+          animation: dashFlow 0.8s linear infinite;
+        }
+      `}</style>
+
+      {/* SVG canvas สำหรับวาดเส้น Flow */}
+      <svg className="absolute inset-0 w-full h-full z-0" viewBox="0 0 300 180">
+        {/* PV -> Load (มีทุกระบบ) */}
+        <line x1="150" y1="45" x2="150" y2="135" stroke="#f59e0b" strokeWidth="2.5" className="flow-line-active" />
+        
+        {/* Battery -> Load */}
+        <line 
+          x1="65" y1="90" x2="150" y2="135" 
+          stroke={isOffGrid || isHybrid ? "#10b981" : "#334155"} 
+          strokeWidth={isOffGrid || isHybrid ? "2.5" : "1.5"} 
+          className={isOffGrid || isHybrid ? "flow-line-active" : ""} 
+        />
+        
+        {/* Grid -> Load */}
+        <line 
+          x1="235" y1="90" x2="150" y2="135" 
+          stroke={isOnGrid || isHybrid ? "#a855f7" : "#334155"} 
+          strokeWidth={isOnGrid || isHybrid ? "2.5" : "1.5"} 
+          className={isOnGrid || isHybrid ? "flow-line-active" : ""} 
+        />
+      </svg>
+
+      {/* Nodes ตำแหน่งอุปกรณ์ต่าง ๆ */}
+      <div className="relative z-10 w-full h-full flex flex-col justify-between items-center py-1">
+        
+        {/* TOP: PV */}
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-full border-2 border-amber-400 bg-slate-900 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <Sun className="w-5 h-5 text-amber-400" />
+          </div>
+          <span className="text-[10px] font-bold text-amber-400 mt-0.5">PV (แผงโซลาร์)</span>
+        </div>
+
+        {/* MIDDLE: Battery & Grid */}
+        <div className="w-full flex justify-between px-4 my-auto">
+          {/* Battery Node */}
+          <div className={`flex flex-col items-center transition-opacity ${isOnGrid ? 'opacity-30' : 'opacity-100'}`}>
+            <div className={`w-10 h-10 rounded-full border-2 bg-slate-900 flex items-center justify-center shadow-lg ${
+              isOffGrid || isHybrid ? 'border-emerald-400 shadow-emerald-500/20' : 'border-slate-700'
+            }`}>
+              <BatteryCharging className={`w-5 h-5 ${isOffGrid || isHybrid ? 'text-emerald-400' : 'text-slate-600'}`} />
+            </div>
+            <span className={`text-[10px] font-bold mt-0.5 ${isOffGrid || isHybrid ? 'text-emerald-400' : 'text-slate-500'}`}>
+              Battery
+            </span>
+          </div>
+
+          {/* Grid Node */}
+          <div className={`flex flex-col items-center transition-opacity ${isOffGrid ? 'opacity-30' : 'opacity-100'}`}>
+            <div className={`w-10 h-10 rounded-full border-2 bg-slate-900 flex items-center justify-center shadow-lg ${
+              isOnGrid || isHybrid ? 'border-purple-400 shadow-purple-500/20' : 'border-slate-700'
+            }`}>
+              <Zap className={`w-5 h-5 ${isOnGrid || isHybrid ? 'text-purple-400' : 'text-slate-600'}`} />
+            </div>
+            <span className={`text-[10px] font-bold mt-0.5 ${isOnGrid || isHybrid ? 'text-purple-400' : 'text-slate-500'}`}>
+              Grid (การไฟฟ้า)
+            </span>
+          </div>
+        </div>
+
+        {/* BOTTOM: Load */}
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-full border-2 border-sky-400 bg-slate-900 flex items-center justify-center shadow-lg shadow-sky-500/20">
+            <Home className="w-5 h-5 text-sky-400" />
+          </div>
+          <span className="text-[10px] font-bold text-sky-400 mt-0.5">Load (เครื่องใช้ไฟฟ้า)</span>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // ข้อมูลเนื้อหาสำหรับ Modal สไลด์คลังความรู้
 const KNOWLEDGE_SLIDES = [
   {
@@ -45,138 +137,30 @@ const KNOWLEDGE_SLIDES = [
       <div className="space-y-4 py-2 max-h-[50vh] overflow-y-auto pr-1">
         
         {/* ข้อที่ 1: OFF-GRID */}
-        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-3">
-          <div>
-            <h4 className="font-bold text-amber-400 text-base">1. Off-Grid System (ระบบอิสระ)</h4>
-            <p className="text-xs text-slate-300 mt-1">
-              ระบบอิสระ ไม่เชื่อมต่อสายส่งการไฟฟ้า มีแบตเตอรี่กักเก็บพลังงานไว้ใช้เอง เหมาะกับพื้นที่ห่างไกล
-            </p>
-          </div>
-
-          {/* Flow Diagram: Off-Grid */}
-          <div className="relative w-full max-w-xs mx-auto h-[130px] flex items-center justify-center pt-2 border-t border-slate-700/50">
-            <div className="absolute top-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-amber-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-[8px] font-bold text-white">2.50 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">PV</span>
-            </div>
-
-            <div className="absolute left-4 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-emerald-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[8px] font-bold text-white">1.20 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Battery</span>
-            </div>
-
-            <div className="absolute right-4 flex flex-col items-center opacity-20">
-              <div className="w-9 h-9 rounded-full border border-purple-400 bg-slate-900 flex flex-col items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[8px] font-bold text-white">0 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Grid</span>
-            </div>
-
-            <div className="absolute bottom-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-sky-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Home className="w-3.5 h-3.5 text-sky-400" />
-                <span className="text-[8px] font-bold text-white">3.70 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Load</span>
-            </div>
-          </div>
+        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-2">
+          <h4 className="font-bold text-amber-400 text-base">1. Off-Grid System (ระบบอิสระ)</h4>
+          <p className="text-xs text-slate-300">
+            ระบบอิสระ ไม่เชื่อมต่อสายส่งการไฟฟ้า มีแบตเตอรี่กักเก็บพลังงานไว้ใช้เอง เหมาะกับพื้นที่ห่างไกล
+          </p>
+          <SolarFlowDiagram type="OFFGRID" />
         </div>
 
         {/* ข้อที่ 2: ON-GRID */}
-        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-3">
-          <div>
-            <h4 className="font-bold text-amber-400 text-base">2. On-Grid System (ระบบเชื่อมต่อสายส่ง)</h4>
-            <p className="text-xs text-slate-300 mt-1">
-              ระบบเชื่อมต่อสายส่งการไฟฟ้า ดึงไฟหลวงมาเสริมทันทีเมื่อผลิตไม่พอ คืนทุนไว ไม่มีแบตเตอรี่
-            </p>
-          </div>
-
-          {/* Flow Diagram: On-Grid */}
-          <div className="relative w-full max-w-xs mx-auto h-[130px] flex items-center justify-center pt-2 border-t border-slate-700/50">
-            <div className="absolute top-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-amber-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-[8px] font-bold text-white">3.20 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">PV</span>
-            </div>
-
-            <div className="absolute left-4 flex flex-col items-center opacity-20">
-              <div className="w-9 h-9 rounded-full border border-emerald-400 bg-slate-900 flex flex-col items-center justify-center">
-                <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[8px] font-bold text-white">0 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Battery</span>
-            </div>
-
-            <div className="absolute right-4 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-purple-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Zap className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[8px] font-bold text-white">0.50 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Grid</span>
-            </div>
-
-            <div className="absolute bottom-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-sky-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Home className="w-3.5 h-3.5 text-sky-400" />
-                <span className="text-[8px] font-bold text-white">3.70 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Load</span>
-            </div>
-          </div>
+        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-2">
+          <h4 className="font-bold text-amber-400 text-base">2. On-Grid System (ระบบเชื่อมต่อสายส่ง)</h4>
+          <p className="text-xs text-slate-300">
+            ระบบเชื่อมต่อสายส่งการไฟฟ้า ดึงไฟหลวงมาเสริมทันทีเมื่อผลิตไม่พอ คืนทุนไว ไม่มีแบตเตอรี่
+          </p>
+          <SolarFlowDiagram type="ONGRID" />
         </div>
 
         {/* ข้อที่ 3: HYBRID */}
-        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-3">
-          <div>
-            <h4 className="font-bold text-amber-400 text-base">3. Hybrid System (ระบบผสมผสาน)</h4>
-            <p className="text-xs text-slate-300 mt-1">
-              ระบบผสมผสาน มีทั้งแบตเตอรี่กักเก็บและเชื่อมต่อสายส่ง ป้องกันปัญหาไฟตกไฟดับได้ 100%
-            </p>
-          </div>
-
-          {/* Flow Diagram: Hybrid */}
-          <div className="relative w-full max-w-xs mx-auto h-[130px] flex items-center justify-center pt-2 border-t border-slate-700/50">
-            <div className="absolute top-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-amber-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-[8px] font-bold text-white">2.80 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">PV</span>
-            </div>
-
-            <div className="absolute left-4 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-emerald-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[8px] font-bold text-white">0.60 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Battery</span>
-            </div>
-
-            <div className="absolute right-4 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-purple-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Zap className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[8px] font-bold text-white">0.30 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Grid</span>
-            </div>
-
-            <div className="absolute bottom-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border border-sky-400 bg-slate-900 flex flex-col items-center justify-center shadow-md">
-                <Home className="w-3.5 h-3.5 text-sky-400" />
-                <span className="text-[8px] font-bold text-white">3.70 kW</span>
-              </div>
-              <span className="text-[9px] text-slate-400">Load</span>
-            </div>
-          </div>
+        <div className="bg-slate-800/90 p-4 rounded-xl border border-slate-700 space-y-2">
+          <h4 className="font-bold text-amber-400 text-base">3. Hybrid System (ระบบผสมผสาน)</h4>
+          <p className="text-xs text-slate-300">
+            ระบบผสมผสาน มีทั้งแบตเตอรี่กักเก็บและเชื่อมต่อสายส่ง ป้องกันปัญหาไฟตกไฟดับได้ 100%
+          </p>
+          <SolarFlowDiagram type="HYBRID" />
         </div>
 
       </div>
@@ -198,57 +182,10 @@ const KNOWLEDGE_SLIDES = [
         </div>
       </div>
     )
-  },
-  {
-    title: "ขั้นตอนการเปิด-ปิด ระบบ (Operations)",
-    subtitle: "ข้อปฏิบัติเพื่อความปลอดภัยในการใช้งาน",
-    content: (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-        <div className="bg-slate-800 p-4 rounded-xl border border-emerald-500/30">
-          <h4 className="font-bold text-emerald-400 mb-2 flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> ขั้นตอนการเปิด (ON)</h4>
-          <ol className="list-decimal list-inside space-y-1 text-slate-300">
-            <li>เปิด MCCB และ MCB ที่ตู้ SMDB (ตู้ MBD)</li>
-            <li>เปิด CB แต่ละตัวที่ตู้ Solar DC Panel</li>
-            <li>หมุนเปิดสวิตช์ Inverter แต่ละตัว</li>
-          </ol>
-        </div>
-        <div className="bg-slate-800 p-4 rounded-xl border border-rose-500/30">
-          <h4 className="font-bold text-rose-400 mb-2 flex items-center gap-1"><ShieldAlert className="w-4 h-4"/> ขั้นตอนการปิด (OFF)</h4>
-          <p className="text-slate-300">ให้ดำเนินการย้อนลำดับขั้นตอนการเปิดอย่างเคร่งครัด:</p>
-          <p className="mt-2 font-mono text-amber-400 bg-slate-900 p-2 rounded border border-slate-700 text-center">
-            OFF ตู้ Solar DC → OFF Inverter → OFF ตู้ SMDB
-          </p>
-        </div>
-      </div>
-    )
-  },
-  {
-    title: "สรุปผลการใช้พลังงานไฟฟ้า (สบปราบ-ผาลาด จ.ลำปาง)",
-    subtitle: "ข้อมูลการผลิตไฟฟ้ารวมขนาด 18 kWp",
-    content: (
-      <div className="space-y-3 text-xs">
-        <div className="grid grid-cols-2 gap-3 text-center">
-          <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-            <span className="text-slate-400">ไฟฟ้าจาก กฟภ.</span>
-            <p className="text-xl font-bold text-rose-400">29.8%</p>
-            <span className="text-[10px] text-slate-500">(4,040.80 kWh)</span>
-          </div>
-          <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-            <span className="text-slate-400">ไฟฟ้าจาก Solar Cell</span>
-            <p className="text-xl font-bold text-emerald-400">70.2%</p>
-            <span className="text-[10px] text-slate-500">(9,523.47 kWh)</span>
-          </div>
-        </div>
-        <p className="text-slate-300 text-center bg-slate-800/50 p-2 rounded-lg">
-          ช่วยลดค่าไฟฟ้าของโครงการลงอย่างต่อเนื่อง พร้อมทั้งลดการปล่อยก๊าซเรือนกระจก ($CO_2$) และลดการใช้ถ่านหิน
-        </p>
-      </div>
-    )
   }
 ];
 
 function CleanEnergyPortal() {
-  // State สำหรับควบคุม Modal อ่านสไลด์
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
@@ -275,7 +212,6 @@ function CleanEnergyPortal() {
             <span>Mahidol Clean Energy</span>
           </div>
           
-          {/* เมนูแบบกล่องสีเขียว */}
           <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm font-medium">
             <button 
               onClick={() => scrollToSection('dashboard')}
@@ -296,7 +232,6 @@ function CleanEnergyPortal() {
               สถิติการผลิต
             </button>
 
-            {/* ลิงก์ไปยังโฟลเดอร์/หน้าอื่น */}
             <Link 
               to="/ev" 
               className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition cursor-pointer shadow-md shadow-emerald-500/20 active:scale-95 inline-block"
@@ -330,22 +265,22 @@ function CleanEnergyPortal() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">กำลังการผลิตรวม</p>
+            <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+              <p className="text-xs text-slate-400 font-semibold uppercase">กำลังการผลิตรวม</p>
               <p className="text-3xl font-black text-emerald-400 mt-2">18.00 <span className="text-sm font-normal text-slate-400">kWp</span></p>
             </div>
-            <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">ผลิตไฟวันนี้ (Yield Today)</p>
+            <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+              <p className="text-xs text-slate-400 font-semibold uppercase">ผลิตไฟวันนี้</p>
               <p className="text-3xl font-black text-blue-400 mt-2">21.04 <span className="text-sm font-normal text-slate-400">kWh</span></p>
             </div>
-            <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">ลดปล่อย $CO_2$ สะสม</p>
+            <div className="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+              <p className="text-xs text-slate-400 font-semibold uppercase">ลดปล่อย $CO_2$ สะสม</p>
               <p className="text-3xl font-black text-purple-400 mt-2">19.05 <span className="text-sm font-normal text-slate-400">Tons</span></p>
             </div>
           </div>
         </section>
 
-        {/* SECTION 2: KNOWLEDGE BASE (การ์ดแยก 3 ระบบโซลาร์เซลล์) */}
+        {/* SECTION 2: KNOWLEDGE BASE */}
         <section id="knowledge" className="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 space-y-6 scroll-mt-20">
           <div className="flex justify-between items-end">
             <div>
@@ -371,30 +306,30 @@ function CleanEnergyPortal() {
             >
               <span className="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-md">ระบบที่ 1</span>
               <h3 className="text-base font-semibold text-white group-hover:text-emerald-400 transition">Off-Grid System (ระบบอิสระ)</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">ระบบที่ไม่เชื่อมต่อสายส่งการไฟฟ้า ผลิตไฟฟ้าจากโซลาร์เซลล์เก็บลงแบตเตอรี่ และจ่ายให้โหลดโดยตรง</p>
-              <p className="text-xs text-emerald-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่อดูรายละเอียด →</p>
+              <p className="text-slate-400 text-xs leading-relaxed">ไม่เชื่อมต่อการไฟฟ้า ชาร์จลงแบตเตอรี่ และจ่ายให้เครื่องใช้ไฟฟ้าโดยตรง</p>
+              <SolarFlowDiagram type="OFFGRID" />
             </div>
 
             {/* CARD 2: On-Grid System */}
             <div 
               onClick={() => openSlideModal(1)}
-              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
+              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
-              <span className="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-md">ระบบที่ 2</span>
-              <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition">On-Grid System (ระบบเชื่อมต่อสายส่ง)</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">ทำงานร่วมกับสายส่งการไฟฟ้าโดยตรง ไม่มีแบตเตอรี่ หากผลิตไม่พอจะดึงไฟหลวงมาเสริมอัตโนมัติ</p>
-              <p className="text-xs text-blue-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่อดูรายละเอียด →</p>
+              <span className="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-md">ระบบที่ 2</span>
+              <h3 className="text-base font-semibold text-white group-hover:text-purple-400 transition">On-Grid System (ระบบเชื่อมต่อสายส่ง)</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">เชื่อมต่อสายส่งการไฟฟ้า ดึงไฟหลวงมาเสริมเมื่อผลิตไม่พอ ไม่มีแบตเตอรี่</p>
+              <SolarFlowDiagram type="ONGRID" />
             </div>
 
             {/* CARD 3: Hybrid System */}
             <div 
               onClick={() => openSlideModal(1)}
-              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
+              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg space-y-3"
             >
-              <span className="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-md">ระบบที่ 3</span>
-              <h3 className="text-base font-semibold text-white group-hover:text-purple-400 transition">Hybrid System (ระบบผสมผสาน)</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">รวมข้อดีของทั้ง 2 ระบบ มีแบตเตอรี่สำรองไฟและต่อกับสายส่ง ป้องกันปัญหาไฟตกไฟดับได้ 100%</p>
-              <p className="text-xs text-purple-400/80 pt-2 flex items-center gap-1 font-medium">คลิกเพื่อดูรายละเอียด →</p>
+              <span className="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-md">ระบบที่ 3</span>
+              <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition">Hybrid System (ระบบผสมผสาน)</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">รวมข้อดีของทั้ง 2 ระบบ มีแบตเตอรี่สำรองไฟและต่อกับสายส่ง สำรองไฟได้ 100%</p>
+              <SolarFlowDiagram type="HYBRID" />
             </div>
 
           </div>
