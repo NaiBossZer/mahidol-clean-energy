@@ -4,7 +4,7 @@ import {
   LineChart, ArrowLeft, X, 
   Zap, Sun, Cpu, Leaf, GraduationCap,
   BatteryCharging, Network, Layers, Terminal, CheckCircle2, ChevronRight,
-  Home, ChevronLeft
+  Home, ChevronLeft, ClipboardList, Lock
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -245,10 +245,10 @@ function CleanEnergyPortal() {
           
           <nav className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <button 
-              onClick={() => scrollToSection('dashboard')}
+              onClick={() => scrollToSection('stats')}
               className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-blue-900 transition hidden md:inline-block"
             >
-              // DASHBOARD
+              // STATS
             </button>
             <button 
               onClick={() => scrollToSection('flow')}
@@ -292,12 +292,34 @@ function CleanEnergyPortal() {
               </p>
             </div>
             
-            <a 
-              href="https://mahidol-lampang.vercel.app" 
-              className="inline-flex items-center justify-center gap-2 font-mono text-xs text-blue-900 bg-slate-50 hover:bg-slate-100 border border-slate-300 px-3.5 py-2 rounded transition w-full md:w-auto font-semibold shadow-xs"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-blue-900" /> MAIN_MAP
-            </a>
+            {/* กลุ่มปุ่ม Navigation 3 ปุ่มบนหน้าหลัก */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full md:w-auto">
+              {/* 1. ปุ่ม ย้อนกลับหน้า MAIN_MAP (External Link) */}
+              <a 
+                href="https://mahidol-lampang-portal.vercel.app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="py-2.5 px-3 bg-white hover:bg-slate-50 text-blue-900 border border-slate-300 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-xs"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-blue-900" /> MAIN_MAP
+              </a>
+
+              {/* 2. ปุ่ม แบบประเมินความพึงพอใจ (ส่งไปหน้า /survey) */}
+              <Link 
+                to="/survey" 
+                className="py-2.5 px-3 bg-white hover:bg-slate-50 text-blue-900 border border-slate-300 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-xs"
+              >
+                <ClipboardList className="w-3.5 h-3.5 text-amber-500" /> SURVEY
+              </Link>
+
+              {/* 3. ปุ่ม DASHBOARD (ส่งไปหน้า /login เพื่อยืนยันสิทธิ์ก่อน) */}
+              <Link 
+                to="/login" 
+                className="py-2.5 px-3 bg-blue-900 hover:bg-blue-950 text-amber-400 border border-blue-950 rounded-lg font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs"
+              >
+                <Lock className="w-3.5 h-3.5 text-amber-400" /> DASHBOARD
+              </Link>
+            </div>
           </div>
 
           {/* Metric Cards */}
