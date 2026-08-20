@@ -30,8 +30,8 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
     subtitle: "ระบบผลิตไฟฟ้าแบบอิสระ ไม่เชื่อมต่อกับระบบสายส่งของการไฟฟ้า",
     content: (
       <div className="space-y-4 text-xs font-mono">
-        <div className="bg-amber-50/50 p-4 rounded-md border border-amber-400 space-y-2">
-          <div className="text-slate-900 font-bold flex items-center gap-2">
+        <div className="bg-slate-50 p-4 rounded-md border border-slate-300 space-y-2">
+          <div className="text-blue-900 font-bold flex items-center gap-2">
             <BatteryCharging className="w-4 h-4 text-amber-500" /> SYSTEM_OVERVIEW
           </div>
           <p className="text-slate-700 leading-relaxed font-sans">
@@ -39,8 +39,8 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-sans">
-          <div className="bg-white p-3.5 rounded-md border border-slate-300 shadow-sm">
-            <span className="font-mono text-amber-600 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
+          <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm">
+            <span className="font-mono text-blue-900 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" /> จุดเด่นการใช้งาน
             </span>
             <ul className="text-slate-700 space-y-1 text-xs">
@@ -49,7 +49,7 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
               <li>• ปลอดภัยจากปัญหาไฟตกหรือไฟดับจากระบบหลัก</li>
             </ul>
           </div>
-          <div className="bg-white p-3.5 rounded-md border border-slate-300 shadow-sm">
+          <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm">
             <span className="font-mono text-slate-900 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
               <Cpu className="w-3.5 h-3.5 text-amber-500" /> อุปกรณ์หลักในระบบ
             </span>
@@ -70,8 +70,8 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
     subtitle: "ระบบเชื่อมต่อกับสายส่งการไฟฟ้า มุ่งเน้นลดค่าไฟฟ้าในช่วงกลางวัน",
     content: (
       <div className="space-y-4 text-xs font-mono">
-        <div className="bg-amber-50/50 p-4 rounded-md border border-amber-400 space-y-2">
-          <div className="text-slate-900 font-bold flex items-center gap-2">
+        <div className="bg-slate-50 p-4 rounded-md border border-slate-300 space-y-2">
+          <div className="text-blue-900 font-bold flex items-center gap-2">
             <Network className="w-4 h-4 text-amber-500" /> SYSTEM_OVERVIEW
           </div>
           <p className="text-slate-700 leading-relaxed font-sans">
@@ -79,8 +79,8 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-sans">
-          <div className="bg-white p-3.5 rounded-md border border-slate-300 shadow-sm">
-            <span className="font-mono text-amber-600 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
+          <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm">
+            <span className="font-mono text-blue-900 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" /> จุดเด่นการใช้งาน
             </span>
             <ul className="text-slate-700 space-y-1 text-xs">
@@ -89,7 +89,7 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
               <li>• ระบบดูแลรักษาง่าย ไม่ต้องคอยเปลี่ยนแบตเตอรี่</li>
             </ul>
           </div>
-          <div className="bg-white p-3.5 rounded-md border border-slate-300 shadow-sm">
+          <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm">
             <span className="font-mono text-slate-900 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
               <Cpu className="w-3.5 h-3.5 text-amber-500" /> อุปกรณ์หลักในระบบ
             </span>
@@ -110,8 +110,8 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
     subtitle: "ระบบผสมผสานดึงข้อดีของ On-Grid และ Off-Grid เข้าด้วยกัน",
     content: (
       <div className="space-y-4 text-xs font-mono">
-        <div className="bg-amber-50/50 p-4 rounded-md border border-amber-400 space-y-2">
-          <div className="text-slate-900 font-bold flex items-center gap-2">
+        <div className="bg-slate-50 p-4 rounded-md border border-slate-300 space-y-2">
+          <div className="text-blue-900 font-bold flex items-center gap-2">
             <Layers className="w-4 h-4 text-amber-500" /> SYSTEM_OVERVIEW
           </div>
           <p className="text-slate-700 leading-relaxed font-sans">
@@ -119,8 +119,8 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-sans">
-          <div className="bg-white p-3.5 rounded-md border border-slate-300 shadow-sm">
-            <span className="font-mono text-amber-600 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
+          <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm">
+            <span className="font-mono text-blue-900 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" /> จุดเด่นการใช้งาน
             </span>
             <ul className="text-slate-700 space-y-1 text-xs">
@@ -129,7 +129,7 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
               <li>• ลดค่าไฟได้ทั้งกลางวันและกลางคืน</li>
             </ul>
           </div>
-          <div className="bg-white p-3.5 rounded-md border border-slate-300 shadow-sm">
+          <div className="bg-white p-3.5 rounded-md border border-slate-200 shadow-sm">
             <span className="font-mono text-slate-900 flex items-center gap-1.5 mb-1.5 text-[11px] font-bold">
               <Cpu className="w-3.5 h-3.5 text-amber-500" /> อุปกรณ์หลักในระบบ
             </span>
@@ -152,10 +152,10 @@ const DIAGRAM_SYSTEMS = [
     title: '1. ระบบ Off-Grid',
     desc: 'ระบบอิสระผลิตไฟฟ้าและเก็บสำรองในแบตเตอรี่ 100%',
     nodes: [
-      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-amber-100 text-amber-600 border-amber-400' },
-      { name: 'Off-Grid Inverter', sub: 'แปลงไฟ DC เป็น AC', icon: Cpu, color: 'bg-blue-100 text-blue-600 border-blue-300' },
-      { name: 'Energy Storage', sub: 'แบตเตอรี่เก็บไฟ', icon: BatteryCharging, color: 'bg-emerald-100 text-emerald-600 border-emerald-300' },
-      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้าน', icon: Home, color: 'bg-indigo-100 text-indigo-600 border-indigo-300' }
+      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Off-Grid Inverter', sub: 'แปลงไฟ DC เป็น AC', icon: Cpu, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Energy Storage', sub: 'แบตเตอรี่เก็บไฟ', icon: BatteryCharging, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้าน', icon: Home, color: 'bg-blue-50 text-blue-600 border-blue-200' }
     ]
   },
   {
@@ -163,10 +163,10 @@ const DIAGRAM_SYSTEMS = [
     title: '2. ระบบ On-Grid',
     desc: 'ระบบเชื่อมต่อสายส่งการไฟฟ้าเพื่อลดค่าไฟช่วงกลางวัน',
     nodes: [
-      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-amber-100 text-amber-600 border-amber-400' },
-      { name: 'On-Grid Inverter', sub: 'แปลงไฟ Sync กับระบบการไฟฟ้า', icon: Cpu, color: 'bg-blue-100 text-blue-600 border-blue-300' },
-      { name: 'PEA Power Grid', sub: 'เชื่อมต่อสายส่งการไฟฟ้า', icon: Network, color: 'bg-purple-100 text-purple-600 border-purple-300' },
-      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้าน', icon: Home, color: 'bg-indigo-100 text-indigo-600 border-indigo-300' }
+      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'On-Grid Inverter', sub: 'แปลงไฟ Sync กับระบบการไฟฟ้า', icon: Cpu, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'PEA Power Grid', sub: 'เชื่อมต่อสายส่งการไฟฟ้า', icon: Network, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้าน', icon: Home, color: 'bg-blue-50 text-blue-600 border-blue-200' }
     ]
   },
   {
@@ -174,22 +174,19 @@ const DIAGRAM_SYSTEMS = [
     title: '3. ระบบ Hybrid',
     desc: 'ระบบผสมผสานเชื่อมสายส่งและแบตเตอรี่สำรองไฟ 24 ชม.',
     nodes: [
-      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-amber-100 text-amber-600 border-amber-400' },
-      { name: 'Hybrid Inverter', sub: 'ควบคุมการจ่ายไฟ 3 ทาง', icon: Layers, color: 'bg-blue-100 text-blue-600 border-blue-300' },
-      { name: 'Energy Storage & Grid', sub: 'แบตเตอรี่ + สายส่งการไฟฟ้า', icon: BatteryCharging, color: 'bg-emerald-100 text-emerald-600 border-emerald-300' },
-      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้านต่อเนื่อง', icon: Home, color: 'bg-indigo-100 text-indigo-600 border-indigo-300' }
+      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Hybrid Inverter', sub: 'ควบคุมการจ่ายไฟ 3 ทาง', icon: Layers, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Energy Storage & Grid', sub: 'แบตเตอรี่ + สายส่งการไฟฟ้า', icon: BatteryCharging, color: 'bg-blue-50 text-blue-600 border-blue-200' },
+      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้านต่อเนื่อง', icon: Home, color: 'bg-blue-50 text-blue-600 border-blue-200' }
     ]
   }
 ];
 
 function VerticalFlowArrow() {
   return (
-    <div className="flex flex-col items-center justify-center my-3 space-y-1">
-      {/* Animated Light Bar สีเหลืองนีออนตัดน้ำเงิน */}
-      <div className="w-20 h-2 bg-slate-100 rounded-full overflow-hidden relative border border-amber-300 shadow-sm">
-        <div className="absolute top-0 bottom-0 left-0 w-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 animate-[shimmer_1s_infinite]" />
-      </div>
-      <ArrowDown className="w-5 h-5 text-amber-500 animate-bounce" />
+    <div className="flex flex-col items-center justify-center my-2 space-y-1">
+      <div className="w-12 h-1 bg-blue-900 rounded-full" />
+      <ArrowDown className="w-4 h-4 text-amber-500 animate-bounce" />
     </div>
   );
 }
@@ -214,32 +211,31 @@ function CleanEnergyPortal() {
   };
 
   return (
-    <div className="font-sans bg-white min-h-screen text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-900 pb-24 border-t-4 border-amber-400 overflow-x-hidden relative">
+    <div className="font-sans bg-white min-h-screen text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-900 pb-24 border-t-4 border-blue-900 overflow-x-hidden relative">
       
-      {/* Background Electric Circuit Pattern (ลวดลายวงจรไฟฟ้าสีเหลืองบางๆ ทั่วทั้งหน้า) */}
+      {/* Background Electric Circuit Pattern (ลวดลายวงจรไฟฟ้าเส้นสีน้ำเงิน-ขาว สบายตา ไม่เหลืองพรืด) */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.035] z-0" 
+        className="absolute inset-0 pointer-events-none opacity-[0.04] z-0" 
         style={{
-          backgroundImage: `radial-gradient(#eab308 1px, transparent 1px), linear-gradient(to right, #eab308 1px, transparent 1px), linear-gradient(to bottom, #eab308 1px, transparent 1px)`,
-          backgroundSize: '24px 24px, 48px 48px, 48px 48px'
+          backgroundImage: `radial-gradient(#1e3a8a 1.5px, transparent 1.5px), linear-gradient(to right, #1e3a8a 1px, transparent 1px), linear-gradient(to bottom, #1e3a8a 1px, transparent 1px)`,
+          backgroundSize: '32px 32px'
         }}
       />
 
-      {/* Header Bar */}
+      {/* Header Bar - Blue & White Theme with Yellow Accent Line */}
       <header className="w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 md:px-8 py-3.5 shadow-sm relative z-10">
         
-        {/* Neon Yellow Accent Line Under Header */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent" />
+        {/* Electric Accent Line Under Header */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-900 via-amber-400 to-blue-900" />
 
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded bg-blue-600 flex-shrink-0 flex items-center justify-center shadow-sm relative overflow-hidden group">
+            <div className="w-8 h-8 rounded bg-blue-900 flex-shrink-0 flex items-center justify-center shadow-sm relative overflow-hidden group">
               <GraduationCap className="w-4 h-4 text-white relative z-10" />
-              <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-20 transition" />
             </div>
             <div className="flex flex-col truncate">
-              <span className="font-bold text-xs sm:text-sm text-slate-900 tracking-tight leading-none truncate">
+              <span className="font-bold text-xs sm:text-sm text-blue-950 tracking-tight leading-none truncate">
                 MAHIDOL <span className="text-amber-500 font-mono text-[10px] sm:text-xs">[RESEARCH]</span>
               </span>
               <span className="font-mono text-[9px] sm:text-[10px] text-slate-500 truncate">Sopprab-Phalat</span>
@@ -249,28 +245,28 @@ function CleanEnergyPortal() {
           <nav className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <button 
               onClick={() => scrollToSection('dashboard')}
-              className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-amber-600 transition hidden md:inline-block"
+              className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-blue-900 transition hidden md:inline-block"
             >
               // DASHBOARD
             </button>
             <button 
               onClick={() => scrollToSection('flow')}
-              className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-amber-600 transition hidden sm:inline-block"
+              className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-blue-900 transition hidden sm:inline-block"
             >
               // FLOW_DIAGRAM
             </button>
             <button 
               onClick={() => scrollToSection('bases')}
-              className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-amber-600 transition hidden sm:inline-block"
+              className="px-2 py-1 text-[11px] font-mono text-slate-600 hover:text-blue-900 transition hidden sm:inline-block"
             >
               // BASES
             </button>
 
             <Link 
               to="/ev" 
-              className="px-3 py-1.5 bg-slate-900 hover:bg-black text-yellow-400 border border-yellow-400 font-mono text-xs rounded font-bold transition shadow-sm flex items-center gap-1"
+              className="px-3 py-1.5 bg-blue-900 hover:bg-blue-950 text-amber-400 border border-blue-900 font-mono text-xs rounded font-bold transition shadow-sm flex items-center gap-1"
             >
-              <Zap className="w-3 h-3 fill-yellow-400" /> BOOK_EV
+              <Zap className="w-3 h-3 fill-amber-400 text-amber-400" /> BOOK_EV
             </Link>
           </nav>
         </div>
@@ -282,8 +278,8 @@ function CleanEnergyPortal() {
         <section id="dashboard" className="scroll-mt-6 space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-amber-50 border border-amber-300 font-mono text-[11px] text-amber-700 mb-2.5 font-bold shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-blue-50 border border-blue-200 font-mono text-[11px] text-blue-900 mb-2.5 font-bold shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
                 <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                 SYSTEM_STATUS: ELECTRIC_ONLINE
               </div>
@@ -297,56 +293,56 @@ function CleanEnergyPortal() {
             
             <a 
               href="https://mahidol-lampang.vercel.app" 
-              className="inline-flex items-center justify-center gap-2 font-mono text-xs text-slate-800 bg-amber-50 hover:bg-amber-100 border border-amber-300 px-3.5 py-2 rounded transition w-full md:w-auto font-semibold shadow-xs"
+              className="inline-flex items-center justify-center gap-2 font-mono text-xs text-blue-900 bg-slate-50 hover:bg-slate-100 border border-slate-300 px-3.5 py-2 rounded transition w-full md:w-auto font-semibold shadow-xs"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-amber-600" /> MAIN_MAP
+              <ArrowLeft className="w-3.5 h-3.5 text-blue-900" /> MAIN_MAP
             </a>
           </div>
 
-          {/* Metric Cards - Enhanced with Electric Yellow Accents */}
+          {/* Metric Cards - Clean White Cards with Blue/Yellow Circuit Border Accents */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             
-            <div className="bg-gradient-to-b from-slate-50 to-amber-50/30 p-5 rounded-lg border border-amber-200 hover:border-amber-400 transition shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-12 h-12 bg-yellow-300/20 blur-xl rounded-full" />
+            <div className="bg-white p-5 rounded-lg border-2 border-slate-200 hover:border-blue-900 transition shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-900" />
               <div className="flex items-center justify-between font-mono text-xs text-slate-500">
-                <span className="flex items-center gap-1.5 text-amber-600 font-bold"><Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> CAPACITY</span>
-                <span className="text-amber-500 font-bold">METRIC_01</span>
+                <span className="flex items-center gap-1.5 text-blue-900 font-bold"><Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> CAPACITY</span>
+                <span className="text-amber-600 font-bold">METRIC_01</span>
               </div>
               <div className="mt-3 flex items-baseline gap-1.5 font-mono">
                 <span className="text-3xl sm:text-4xl font-bold text-slate-900">18.00</span>
                 <span className="text-xs text-slate-500">kWp</span>
               </div>
-              <p className="text-xs text-slate-600 mt-3 border-t border-amber-200/60 pt-2.5">
+              <p className="text-xs text-slate-600 mt-3 border-t border-slate-100 pt-2.5">
                 กำลังการผลิตติดตั้งครอบคลุมศูนย์วิจัยฯ
               </p>
             </div>
 
-            <div className="bg-gradient-to-b from-slate-50 to-amber-50/30 p-5 rounded-lg border border-amber-200 hover:border-amber-400 transition shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-12 h-12 bg-yellow-300/20 blur-xl rounded-full" />
+            <div className="bg-white p-5 rounded-lg border-2 border-slate-200 hover:border-blue-900 transition shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-900" />
               <div className="flex items-center justify-between font-mono text-xs text-slate-500">
-                <span className="flex items-center gap-1.5 text-amber-600 font-bold"><Sun className="w-3.5 h-3.5 text-amber-500" /> GENERATION</span>
-                <span className="text-amber-500 font-bold">METRIC_02</span>
+                <span className="flex items-center gap-1.5 text-blue-900 font-bold"><Sun className="w-3.5 h-3.5 text-amber-500" /> GENERATION</span>
+                <span className="text-amber-600 font-bold">METRIC_02</span>
               </div>
               <div className="mt-3 flex items-baseline gap-1.5 font-mono">
                 <span className="text-3xl sm:text-4xl font-bold text-slate-900">21.04</span>
                 <span className="text-xs text-slate-500">kWh</span>
               </div>
-              <p className="text-xs text-slate-600 mt-3 border-t border-amber-200/60 pt-2.5">
+              <p className="text-xs text-slate-600 mt-3 border-t border-slate-100 pt-2.5">
                 ปริมาณพลังงานไฟฟ้าที่ผลิตได้ในวันนี้
               </p>
             </div>
 
-            <div className="bg-gradient-to-b from-slate-50 to-amber-50/30 p-5 rounded-lg border border-amber-200 hover:border-amber-400 transition shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-12 h-12 bg-yellow-300/20 blur-xl rounded-full" />
+            <div className="bg-white p-5 rounded-lg border-2 border-slate-200 hover:border-blue-900 transition shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-900" />
               <div className="flex items-center justify-between font-mono text-xs text-slate-500">
-                <span className="flex items-center gap-1.5 text-amber-600 font-bold"><Leaf className="w-3.5 h-3.5 text-amber-500" /> OFFSETS</span>
-                <span className="text-amber-500 font-bold">METRIC_03</span>
+                <span className="flex items-center gap-1.5 text-blue-900 font-bold"><Leaf className="w-3.5 h-3.5 text-amber-500" /> OFFSETS</span>
+                <span className="text-amber-600 font-bold">METRIC_03</span>
               </div>
               <div className="mt-3 flex items-baseline gap-1.5 font-mono">
                 <span className="text-3xl sm:text-4xl font-bold text-slate-900">19.05</span>
                 <span className="text-xs text-slate-500">Tons</span>
               </div>
-              <p className="text-xs text-slate-600 mt-3 border-t border-amber-200/60 pt-2.5">
+              <p className="text-xs text-slate-600 mt-3 border-t border-slate-100 pt-2.5">
                 ลดการปล่อยก๊าซเรือนกระจกสะสม
               </p>
             </div>
@@ -354,15 +350,12 @@ function CleanEnergyPortal() {
           </div>
         </section>
 
-        {/* SECTION 2: VERTICAL FLOW DIAGRAM WITH YELLOW ELECTRIC GLOW */}
+        {/* SECTION 2: VERTICAL FLOW DIAGRAM */}
         <section id="flow" className="scroll-mt-6 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm max-w-lg mx-auto md:max-w-none relative overflow-hidden">
           
-          {/* Electric Circuit Pattern Line Accent */}
-          <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-yellow-400/10 rounded-full blur-2xl pointer-events-none" />
-
           <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
             <div>
-              <span className="font-mono text-xs text-amber-600 font-bold tracking-widest flex items-center gap-1">
+              <span className="font-mono text-xs text-blue-900 font-bold tracking-widest flex items-center gap-1">
                 <Zap className="w-3 h-3 fill-amber-500 text-amber-500" /> // ELECTRICAL_FLOW_DIAGRAM
               </span>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mt-0.5">
@@ -371,10 +364,8 @@ function CleanEnergyPortal() {
             </div>
           </div>
 
-          {/* Main Diagram Card */}
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm relative">
             
-            {/* Title & Desc */}
             <div className="text-center mb-6">
               <h3 className="text-base sm:text-lg font-bold text-slate-900">
                 {DIAGRAM_SYSTEMS[currentDiagramIndex].title}
@@ -384,23 +375,20 @@ function CleanEnergyPortal() {
               </p>
             </div>
 
-            {/* Vertical Flow List */}
             <div className="flex flex-col items-center max-w-md mx-auto">
               {DIAGRAM_SYSTEMS[currentDiagramIndex].nodes.map((node, index, arr) => {
                 const IconComponent = node.icon;
                 return (
                   <div key={index} className="w-full flex flex-col items-center">
                     
-                    {/* Card Item Node */}
-                    <div className="w-full bg-white border border-slate-200 p-5 rounded-2xl shadow-sm text-center flex flex-col items-center space-y-2 hover:border-amber-400 transition relative group">
-                      <div className={`w-14 h-14 rounded-full border ${node.color} flex items-center justify-center shadow-xs group-hover:scale-105 transition`}>
-                        <IconComponent className="w-7 h-7" />
+                    <div className="w-full bg-white border-2 border-slate-200 p-4 rounded-xl shadow-sm text-center flex flex-col items-center space-y-1.5 hover:border-blue-900 transition relative group">
+                      <div className={`w-12 h-12 rounded-full border ${node.color} flex items-center justify-center shadow-xs group-hover:scale-105 transition`}>
+                        <IconComponent className="w-6 h-6 text-blue-900" />
                       </div>
                       <div className="font-bold text-sm text-slate-900">{node.name}</div>
                       <p className="text-xs text-slate-400 font-sans">{node.sub}</p>
                     </div>
 
-                    {/* Yellow Electric Arrow Flow */}
                     {index < arr.length - 1 && (
                       <VerticalFlowArrow />
                     )}
@@ -410,23 +398,21 @@ function CleanEnergyPortal() {
               })}
             </div>
 
-            {/* Pagination & Nav Buttons */}
             <div className="flex items-center justify-between border-t border-slate-100 pt-5 mt-6">
               <button 
                 onClick={prevDiagram}
-                className="px-3.5 py-1.5 bg-slate-100 hover:bg-amber-100 text-slate-800 font-mono text-xs rounded-lg transition flex items-center gap-1 font-semibold border border-slate-200 hover:border-amber-300"
+                className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-mono text-xs rounded-lg transition flex items-center gap-1 font-semibold border border-slate-300"
               >
-                <ChevronLeft className="w-4 h-4 text-amber-600" /> PREV
+                <ChevronLeft className="w-4 h-4 text-blue-900" /> PREV
               </button>
 
-              {/* Dots Indicator with Yellow Glow */}
               <div className="flex items-center gap-2">
                 {DIAGRAM_SYSTEMS.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentDiagramIndex(idx)}
                     className={`h-2.5 rounded-full transition-all ${
-                      currentDiagramIndex === idx ? 'w-8 bg-amber-400 shadow-xs' : 'w-2.5 bg-slate-200'
+                      currentDiagramIndex === idx ? 'w-8 bg-blue-900 shadow-xs' : 'w-2.5 bg-slate-200'
                     }`}
                   />
                 ))}
@@ -434,9 +420,9 @@ function CleanEnergyPortal() {
 
               <button 
                 onClick={nextDiagram}
-                className="px-3.5 py-1.5 bg-slate-100 hover:bg-amber-100 text-slate-800 font-mono text-xs rounded-lg transition flex items-center gap-1 font-semibold border border-slate-200 hover:border-amber-300"
+                className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-mono text-xs rounded-lg transition flex items-center gap-1 font-semibold border border-slate-300"
               >
-                NEXT <ChevronRight className="w-4 h-4 text-amber-600" />
+                NEXT <ChevronRight className="w-4 h-4 text-blue-900" />
               </button>
             </div>
 
@@ -444,10 +430,10 @@ function CleanEnergyPortal() {
 
         </section>
 
-        {/* SECTION 3: 3 SOLAR SYSTEM BASES WITH YELLOW CORNER ACCENTS */}
+        {/* SECTION 3: 3 SOLAR SYSTEM BASES */}
         <section id="bases" className="scroll-mt-6 space-y-5">
           <div className="border-b border-slate-200 pb-3">
-            <span className="font-mono text-xs text-amber-600 font-bold tracking-widest">// ARCHITECTURE</span>
+            <span className="font-mono text-xs text-blue-900 font-bold tracking-widest">// ARCHITECTURE</span>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
               3 ฐานการเรียนรู้ระบบโซลาร์เซลล์ ศูนย์วิจัยมหิดล
             </h2>
@@ -455,81 +441,78 @@ function CleanEnergyPortal() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             
-            {/* Base 1: Off-Grid */}
             <div 
               onClick={() => setActiveBase('OFF_GRID')}
-              className="bg-slate-50 hover:bg-white border-2 border-slate-200 hover:border-amber-400 p-5 rounded-lg transition duration-200 cursor-pointer group flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md relative overflow-hidden"
+              className="bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-blue-900 p-5 rounded-lg transition duration-200 cursor-pointer group flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-2 h-full bg-amber-400 opacity-0 group-hover:opacity-100 transition" />
+              <div className="absolute top-0 right-0 w-2 h-full bg-blue-900 opacity-0 group-hover:opacity-100 transition" />
               <div className="space-y-3">
                 <div className="flex justify-between items-center font-mono text-[11px]">
-                  <span className="text-slate-900 bg-amber-400 px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
-                    <Zap className="w-3 h-3 fill-slate-900" /> BASE 01
+                  <span className="text-white bg-blue-900 px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
+                    <Zap className="w-3 h-3 fill-amber-400 text-amber-400" /> BASE 01
                   </span>
                   <span className="text-slate-500 font-semibold">OFF_GRID</span>
                 </div>
-                <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-600 transition flex items-center justify-between">
-                  1. ระบบ Off-Grid <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500" />
+                <h3 className="font-bold text-base text-slate-900 group-hover:text-blue-900 transition flex items-center justify-between">
+                  1. ระบบ Off-Grid <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-900" />
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed font-sans">
                   ระบบอิสระไม่เชื่อมต่อสายส่งการไฟฟ้า สำรองไฟเข้าแบตเตอรี่ เหมาะสำหรับพื้นที่ห่างไกล
                 </p>
               </div>
-              <div className="bg-white border border-slate-200 p-2.5 rounded font-mono text-[11px] text-slate-700 flex justify-between items-center group-hover:border-amber-300">
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded font-mono text-[11px] text-slate-700 flex justify-between items-center group-hover:border-blue-300">
                 <span className="text-slate-900 font-semibold">INSPECT_BASE</span>
-                <Terminal className="w-3.5 h-3.5 text-amber-500" />
+                <Terminal className="w-3.5 h-3.5 text-blue-900" />
               </div>
             </div>
 
-            {/* Base 2: On-Grid */}
             <div 
               onClick={() => setActiveBase('ON_GRID')}
-              className="bg-slate-50 hover:bg-white border-2 border-slate-200 hover:border-amber-400 p-5 rounded-lg transition duration-200 cursor-pointer group flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md relative overflow-hidden"
+              className="bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-blue-900 p-5 rounded-lg transition duration-200 cursor-pointer group flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-2 h-full bg-amber-400 opacity-0 group-hover:opacity-100 transition" />
+              <div className="absolute top-0 right-0 w-2 h-full bg-blue-900 opacity-0 group-hover:opacity-100 transition" />
               <div className="space-y-3">
                 <div className="flex justify-between items-center font-mono text-[11px]">
-                  <span className="text-slate-900 bg-amber-400 px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
-                    <Zap className="w-3 h-3 fill-slate-900" /> BASE 02
+                  <span className="text-white bg-blue-900 px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
+                    <Zap className="w-3 h-3 fill-amber-400 text-amber-400" /> BASE 02
                   </span>
                   <span className="text-slate-500 font-semibold">ON_GRID</span>
                 </div>
-                <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-600 transition flex items-center justify-between">
-                  2. ระบบ On-Grid <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500" />
+                <h3 className="font-bold text-base text-slate-900 group-hover:text-blue-900 transition flex items-center justify-between">
+                  2. ระบบ On-Grid <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-900" />
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed font-sans">
                   ระบบเชื่อมสายส่งไฟฟ้าหลวง เน้นผลิตไฟใช้ตอนกลางวัน ลดค่าไฟฟ้าได้สูงสุดและคืนทุนไวที่สุด
                 </p>
               </div>
-              <div className="bg-white border border-slate-200 p-2.5 rounded font-mono text-[11px] text-slate-700 flex justify-between items-center group-hover:border-amber-300">
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded font-mono text-[11px] text-slate-700 flex justify-between items-center group-hover:border-blue-300">
                 <span className="text-slate-900 font-semibold">INSPECT_BASE</span>
-                <Terminal className="w-3.5 h-3.5 text-amber-500" />
+                <Terminal className="w-3.5 h-3.5 text-blue-900" />
               </div>
             </div>
 
-            {/* Base 3: Hybrid */}
             <div 
               onClick={() => setActiveBase('HYBRID')}
-              className="bg-slate-50 hover:bg-white border-2 border-slate-200 hover:border-amber-400 p-5 rounded-lg transition duration-200 cursor-pointer group flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md relative overflow-hidden"
+              className="bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-blue-900 p-5 rounded-lg transition duration-200 cursor-pointer group flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-2 h-full bg-amber-400 opacity-0 group-hover:opacity-100 transition" />
+              <div className="absolute top-0 right-0 w-2 h-full bg-blue-900 opacity-0 group-hover:opacity-100 transition" />
               <div className="space-y-3">
                 <div className="flex justify-between items-center font-mono text-[11px]">
-                  <span className="text-slate-900 bg-amber-400 px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
-                    <Zap className="w-3 h-3 fill-slate-900" /> BASE 03
+                  <span className="text-white bg-blue-900 px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
+                    <Zap className="w-3 h-3 fill-amber-400 text-amber-400" /> BASE 03
                   </span>
                   <span className="text-slate-500 font-semibold">HYBRID</span>
                 </div>
-                <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-600 transition flex items-center justify-between">
-                  3. ระบบ Hybrid <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500" />
+                <h3 className="font-bold text-base text-slate-900 group-hover:text-blue-900 transition flex items-center justify-between">
+                  3. ระบบ Hybrid <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-900" />
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed font-sans">
                   ระบบผสมผสานเชื่อมต่อสายส่งร่วมกับแบตเตอรี่ มีไฟสำรองใช้อย่างต่อเนื่องแม้เวลาไฟดับ
                 </p>
               </div>
-              <div className="bg-white border border-slate-200 p-2.5 rounded font-mono text-[11px] text-slate-700 flex justify-between items-center group-hover:border-amber-300">
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded font-mono text-[11px] text-slate-700 flex justify-between items-center group-hover:border-blue-300">
                 <span className="text-slate-900 font-semibold">INSPECT_BASE</span>
-                <Terminal className="w-3.5 h-3.5 text-amber-500" />
+                <Terminal className="w-3.5 h-3.5 text-blue-900" />
               </div>
             </div>
 
@@ -540,7 +523,7 @@ function CleanEnergyPortal() {
         <section id="stats" className="scroll-mt-6 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-lg shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <h2 className="text-sm sm:text-base font-bold text-slate-900 font-mono flex items-center gap-2">
-              <LineChart className="w-4 h-4 text-amber-500" /> // PRODUCTION_ANALYTICS (kWh)
+              <LineChart className="w-4 h-4 text-blue-900" /> // PRODUCTION_ANALYTICS (kWh)
             </h2>
             <span className="font-mono text-[11px] text-slate-500">PERIOD: JAN-JUN 2026</span>
           </div>
@@ -549,9 +532,9 @@ function CleanEnergyPortal() {
               <AreaChart data={productionData}>
                 <XAxis dataKey="month" stroke="#64748B" style={{ fontSize: '10px', fontFamily: 'monospace' }} />
                 <YAxis stroke="#64748B" style={{ fontSize: '10px', fontFamily: 'monospace' }} />
-                <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#FCD34D', borderRadius: '6px', fontFamily: 'monospace', fontSize: '12px', color: '#0F172A' }} />
-                <Area type="monotone" dataKey="solar" name="Solar Cell" stroke="#EAB308" fill="#FACC15" fillOpacity={0.25} />
-                <Area type="monotone" dataKey="grid" name="PEA Grid" stroke="#94A3B8" fill="#CBD5E1" fillOpacity={0.2} />
+                <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#1E3A8A', borderRadius: '6px', fontFamily: 'monospace', fontSize: '12px', color: '#0F172A' }} />
+                <Area type="monotone" dataKey="solar" name="Solar Cell" stroke="#1E3A8A" fill="#1E3A8A" fillOpacity={0.15} />
+                <Area type="monotone" dataKey="grid" name="PEA Grid" stroke="#EAB308" fill="#FACC15" fillOpacity={0.15} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -562,11 +545,11 @@ function CleanEnergyPortal() {
       {/* BASE DETAILS MODAL */}
       {activeBase && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white border-2 border-amber-400 w-full max-w-2xl rounded-xl p-5 sm:p-6 relative flex flex-col justify-between max-h-[90vh] shadow-2xl">
+          <div className="bg-white border-2 border-blue-900 w-full max-w-2xl rounded-xl p-5 sm:p-6 relative flex flex-col justify-between max-h-[90vh] shadow-2xl">
             
             <div className="flex justify-between items-start border-b border-slate-200 pb-3">
               <div>
-                <span className="font-mono text-[10px] text-amber-600 font-bold tracking-widest">{BASE_DETAILS[activeBase].tag}</span>
+                <span className="font-mono text-[10px] text-blue-900 font-bold tracking-widest">{BASE_DETAILS[activeBase].tag}</span>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight mt-0.5">
                   {BASE_DETAILS[activeBase].title}
                 </h3>
@@ -590,7 +573,7 @@ function CleanEnergyPortal() {
               <span className="text-[10px] sm:text-[11px] text-slate-500">MAHIDOL_SUSTAINABILITY_2026</span>
               <button
                 onClick={() => setActiveBase(null)}
-                className="px-4 py-2 text-xs font-bold bg-amber-400 hover:bg-amber-500 text-slate-900 rounded transition shadow-sm"
+                className="px-4 py-2 text-xs font-bold bg-blue-900 hover:bg-blue-950 text-white rounded transition shadow-sm"
               >
                 CLOSE_CONSOLE
               </button>
