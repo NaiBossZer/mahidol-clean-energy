@@ -213,15 +213,6 @@ function CleanEnergyPortal() {
   return (
     <div className="font-sans bg-white min-h-screen text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-900 pb-24 border-t-4 border-blue-900 overflow-x-hidden relative">
       
-      {/* Background Electric Circuit Pattern */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.04] z-0" 
-        style={{
-          backgroundImage: `radial-gradient(#1e3a8a 1.5px, transparent 1.5px), linear-gradient(to right, #1e3a8a 1px, transparent 1px), linear-gradient(to bottom, #1e3a8a 1px, transparent 1px)`,
-          backgroundSize: '32px 32px'
-        }}
-      />
-
       {/* Header Bar - Sticky Top for Mobile/Desktop Scrolling */}
       <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 md:px-8 py-3.5 shadow-sm">
         
