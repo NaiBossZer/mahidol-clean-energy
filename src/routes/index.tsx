@@ -4,7 +4,7 @@ import {
   LineChart, ArrowLeft, X, 
   Zap, Sun, Cpu, Leaf, GraduationCap,
   BatteryCharging, Network, Layers, Terminal, CheckCircle2, ChevronRight,
-  ArrowDown, Home, ChevronLeft
+  Home, ChevronLeft
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -185,8 +185,8 @@ const DIAGRAM_SYSTEMS = [
 function VerticalFlowArrow() {
   return (
     <div className="flex flex-col items-center justify-center my-2 space-y-1">
-      <div className="w-12 h-1 bg-blue-900 rounded-full" />
-      <ArrowDown className="w-4 h-4 text-amber-500 animate-bounce" />
+      <div className="w-[2px] h-4 bg-blue-900" />
+      <div className="w-2 h-2 border-r-2 border-b-2 border-blue-900 rotate-45 -mt-1.5" />
     </div>
   );
 }
@@ -211,8 +211,18 @@ function CleanEnergyPortal() {
   };
 
   return (
-    <div className="font-sans bg-white min-h-screen text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-900 pb-24 border-t-4 border-blue-900 overflow-x-hidden relative">
+    <div className="font-sans bg-white min-h-screen text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-900 pb-24 border-t-4 border-blue-900 overflow-x-hidden">
       
+      {/* 🔴 CSS Override ปิด Grid Pattern บน Root Elements เด็ดขาด 100% */}
+      <style>{`
+        html, body, #root, div {
+          background-image: none !important;
+        }
+        *::before, *::after {
+          background-image: none !important;
+        }
+      `}</style>
+
       {/* Header Bar - Sticky Top for Mobile/Desktop Scrolling */}
       <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 md:px-8 py-3.5 shadow-sm">
         
