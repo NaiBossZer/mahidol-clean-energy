@@ -263,11 +263,28 @@ function CleanEnergyPortal() {
               // BASES
             </button>
 
+            {/* 1. ปุ่ม BOOK_EV */}
             <Link 
               to="/ev" 
-              className="px-3 py-1.5 bg-blue-900 hover:bg-blue-950 text-amber-400 border border-blue-900 font-mono text-xs rounded font-bold transition shadow-sm flex items-center gap-1"
+              className="px-2.5 sm:px-3 py-1.5 bg-blue-900 hover:bg-blue-950 text-amber-400 border border-blue-900 font-mono text-[11px] sm:text-xs rounded font-bold transition shadow-sm flex items-center gap-1"
             >
               <Zap className="w-3 h-3 fill-amber-400 text-amber-400" /> BOOK_EV
+            </Link>
+
+            {/* 2. ปุ่ม SURVEY (ย้ายมาไว้ข้างขวาต่อจาก BOOK_EV) */}
+            <Link 
+              to="/survey" 
+              className="px-2.5 sm:px-3 py-1.5 bg-white hover:bg-slate-50 text-blue-900 border border-slate-300 font-mono text-[11px] sm:text-xs rounded font-semibold transition shadow-xs flex items-center gap-1"
+            >
+              <ClipboardList className="w-3.5 h-3.5 text-amber-500" /> SURVEY
+            </Link>
+
+            {/* 3. ปุ่ม DASHBOARD (ย้ายมาไว้ข้างขวา) */}
+            <Link 
+              to="/login" 
+              className="px-2.5 sm:px-3 py-1.5 bg-blue-900 hover:bg-blue-950 text-white border border-blue-950 font-mono text-[11px] sm:text-xs rounded font-bold transition shadow-xs flex items-center gap-1"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-400" /> DASHBOARD
             </Link>
           </nav>
         </div>
@@ -292,34 +309,15 @@ function CleanEnergyPortal() {
               </p>
             </div>
             
-            {/* กลุ่มปุ่ม Navigation 3 ปุ่มบนหน้าหลัก */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full md:w-auto">
-              {/* 1. ปุ่ม ย้อนกลับหน้า MAIN_MAP (External Link) */}
-              <a 
-                href="https://mahidol-lampang-portal.vercel.app" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="py-2.5 px-3 bg-white hover:bg-slate-50 text-blue-900 border border-slate-300 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-xs"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 text-blue-900" /> MAIN_MAP
-              </a>
-
-              {/* 2. ปุ่ม แบบประเมินความพึงพอใจ (ส่งไปหน้า /survey) */}
-              <Link 
-                to="/survey" 
-                className="py-2.5 px-3 bg-white hover:bg-slate-50 text-blue-900 border border-slate-300 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-xs"
-              >
-                <ClipboardList className="w-3.5 h-3.5 text-amber-500" /> SURVEY
-              </Link>
-
-              {/* 3. ปุ่ม DASHBOARD (ส่งไปหน้า /login เพื่อยืนยันสิทธิ์ก่อน) */}
-              <Link 
-                to="/login" 
-                className="py-2.5 px-3 bg-blue-900 hover:bg-blue-950 text-amber-400 border border-blue-950 rounded-lg font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs"
-              >
-                <Lock className="w-3.5 h-3.5 text-amber-400" /> DASHBOARD
-              </Link>
-            </div>
+            {/* ปุ่ม MAIN_MAP ตรงจุดเดิม */}
+            <a 
+              href="https://mahidol-lampang-portal.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="py-2.5 px-4 bg-white hover:bg-slate-50 text-blue-900 border border-slate-300 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-xs w-full md:w-auto"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-blue-900" /> MAIN_MAP
+            </a>
           </div>
 
           {/* Metric Cards */}
