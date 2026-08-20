@@ -4,7 +4,7 @@ import {
   LineChart, ArrowLeft, X, 
   Zap, Sun, Cpu, Leaf, GraduationCap,
   BatteryCharging, Network, Layers, Terminal, CheckCircle2, ChevronRight,
-  ArrowRight, ArrowDown, Home
+  ArrowRight, ArrowDown, Home, ChevronLeft
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -55,9 +55,9 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
             </span>
             <ul className="text-slate-700 space-y-1 text-xs">
               <li>• Solar Panels (แผงโซลาร์เซลล์)</li>
-              <li>• Solar Charge Controller (เครื่องควบคุมการชาร์จ)</li>
-              <li>• Deep Cycle / Lithium Battery Bank</li>
-              <li>• Off-Grid Inverter</li>
+              <li>• Charge Controller / Off-Grid Inverter</li>
+              <li>• Battery Bank (แบตเตอรี่สำรอง)</li>
+              <li>• Home Load (โหลดอุปกรณ์ไฟฟ้า)</li>
             </ul>
           </div>
         </div>
@@ -95,8 +95,9 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
             </span>
             <ul className="text-slate-700 space-y-1 text-xs">
               <li>• High-Efficiency Solar Panels</li>
-              <li>• Grid-Tied Inverter (ผ่านการรับรอง MEA/PEA)</li>
-              <li>• Zero Export Controller (อุปกรณ์กันไฟย้อน)</li>
+              <li>• On-Grid Inverter</li>
+              <li>• PEA / MEA Grid (สายส่งการไฟฟ้า)</li>
+              <li>• Home Load (โหลดในอาคาร)</li>
             </ul>
           </div>
         </div>
@@ -134,8 +135,9 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
             </span>
             <ul className="text-slate-700 space-y-1 text-xs">
               <li>• Solar Panels</li>
-              <li>• Smart Hybrid Inverter</li>
-              <li>• Energy Storage System (ESS Lithium Battery)</li>
+              <li>• Hybrid Inverter</li>
+              <li>• Energy Storage System (ESS Battery)</li>
+              <li>• Home Load + Power Grid Connection</li>
             </ul>
           </div>
         </div>
@@ -144,14 +146,78 @@ const BASE_DETAILS: Record<BaseType, { title: string; tag: string; subtitle: str
   }
 };
 
+const DIAGRAM_SYSTEMS = [
+  {
+    id: 'OFF_GRID',
+    title: '1. ระบบ Off-Grid (แบตเตอรี่สำรอง 100%)',
+    desc: 'แผงโซลาร์ $\\rightarrow$ อินเวอร์เตอร์ $\\rightarrow$ แบตเตอรี่ $\\rightarrow$ เครื่องใช้ไฟฟ้า (ไม่เชื่อมต่อการไฟฟ้า)',
+    nodes: [
+      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-amber-100 text-amber-600 border-amber-300' },
+      { name: 'Off-Grid Inverter', sub: 'แปลงไฟ DC เป็น AC', icon: Cpu, color: 'bg-blue-100 text-blue-600 border-blue-300' },
+      { name: 'Energy Storage', sub: 'แบตเตอรี่เก็บไฟ', icon: BatteryCharging, color: 'bg-emerald-100 text-emerald-600 border-emerald-300' },
+      { name: 'Home Appliances', sub: 'จ่ายโหลดใช้ในบ้าน', icon: Home, color: 'bg-indigo-100 text-indigo-600 border-indigo-300' }
+    ]
+  },
+  {
+    id: 'ON_GRID',
+    title: '2. ระบบ On-Grid (เชื่อมต่อสายส่งการไฟฟ้า)',
+    desc: 'แผงโซลาร์ $\\rightarrow$ อินเวอร์เตอร์ $\\rightarrow$ จ่ายไฟเข้าอาคาร + สายส่งการไฟฟ้า (ไม่มีแบตเตอรี่)',
+    nodes: [
+      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-amber-100 text-amber-600 border-amber-300' },
+      { name: 'Grid Inverter', sub: 'แปลงไฟ Sync สายส่ง', icon: Cpu, color: 'bg-blue-100 text-blue-600 border-blue-300' },
+      { name: 'Building Load', sub: 'ลดค่าไฟกลางวัน', icon: Home, color: 'bg-indigo-100 text-indigo-600 border-indigo-300' },
+      { name: 'PEA Grid Line', sub: 'สายส่งการไฟฟ้า', icon: Network, color: 'bg-purple-100 text-purple-600 border-purple-300' }
+    ]
+  },
+  {
+    id: 'HYBRID',
+    title: '3. ระบบ Hybrid (ผสมผสาน + สำรองไฟ)',
+    desc: 'แผงโซลาร์ $\\rightarrow$ Hybrid Inverter $\\rightarrow$ ชาร์จแบต + จ่ายโหลด + เชื่อมสายส่งการไฟฟ้า',
+    nodes: [
+      { name: 'Solar PV Panels', sub: 'ผลิตไฟฟ้า DC', icon: Sun, color: 'bg-amber-100 text-amber-600 border-amber-300' },
+      { name: 'Hybrid Inverter', sub: 'คุมทิศทางพลังงาน', icon: Layers, color: 'bg-blue-100 text-blue-600 border-blue-300' },
+      { name: 'ESS Battery / Grid', sub: 'แบตเตอรี่ + ไฟหลวง', icon: BatteryCharging, color: 'bg-emerald-100 text-emerald-600 border-emerald-300' },
+      { name: 'Home & UPS Load', sub: 'จ่ายไฟ 24 ชม. แม้ไฟดับ', icon: Home, color: 'bg-indigo-100 text-indigo-600 border-indigo-300' }
+    ]
+  }
+];
+
+function AnimatedFlowArrow() {
+  return (
+    <div className="flex md:flex-col items-center justify-center my-2 md:my-0 relative">
+      {/* Horizontal Line (Mobile) */}
+      <div className="w-16 h-1 bg-slate-200 md:hidden relative overflow-hidden rounded-full">
+        <div className="absolute top-0 bottom-0 w-8 bg-blue-500 rounded-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-600 to-transparent animate-[shimmer_1.5s_infinite]" />
+      </div>
+      {/* Vertical Line (Desktop) */}
+      <div className="hidden md:block w-1 h-12 bg-slate-200 relative overflow-hidden rounded-full">
+        <div className="absolute left-0 right-0 h-6 bg-blue-500 rounded-full animate-[pulse_1s_infinite]" />
+      </div>
+      <div className="text-blue-600 md:rotate-90 font-bold ml-1 md:ml-0 md:mt-1 animate-bounce">
+        <ArrowRight className="w-5 h-5" />
+      </div>
+    </div>
+  );
+}
+
 function CleanEnergyPortal() {
   const [activeBase, setActiveBase] = useState<BaseType | null>(null);
+  const [currentDiagramIndex, setCurrentDiagramIndex] = useState<number>(0);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const nextDiagram = () => {
+    setCurrentDiagramIndex((prev) => (prev + 1) % DIAGRAM_SYSTEMS.length);
+  };
+
+  const prevDiagram = () => {
+    setCurrentDiagramIndex((prev) => (prev - 1 + DIAGRAM_SYSTEMS.length) % DIAGRAM_SYSTEMS.length);
   };
 
   return (
@@ -277,66 +343,111 @@ function CleanEnergyPortal() {
           </div>
         </section>
 
-        {/* SECTION 2: POWER FLOW DIAGRAM */}
+        {/* SECTION 2: POWER FLOW DIAGRAM (SWIPEABLE & ANIMATED) */}
         <section id="flow" className="scroll-mt-6 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-lg shadow-sm">
-          <div className="border-b border-slate-200 pb-3 flex justify-between items-center">
+          
+          {/* Header & Controls */}
+          <div className="border-b border-slate-200 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <span className="font-mono text-xs text-blue-600 font-bold tracking-widest">// SYSTEM_DIAGRAM</span>
+              <span className="font-mono text-xs text-blue-600 font-bold tracking-widest">// SWIPEABLE_DIAGRAM</span>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                ไดอะแกรมการไหลของพลังงานไฟฟ้า (Electrical Power Flow)
+                ไดอะแกรมการไหลของพลังงานไฟฟ้า (Power Flow Diagram)
               </h2>
             </div>
-            <span className="hidden sm:inline-block font-mono text-xs text-slate-400">REALTIME_FLOW</span>
-          </div>
 
-          <div className="py-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-              
-              {/* Solar PV */}
-              <div className="bg-white p-4 rounded-lg border border-blue-200 shadow-sm text-center flex flex-col items-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
-                  <Sun className="w-5 h-5" />
-                </div>
-                <div className="font-bold text-sm text-slate-900">1. Solar PV Panels</div>
-                <p className="text-[11px] text-slate-500 font-mono">ผลิตไฟฟ้ากระแสตรง (DC)</p>
-              </div>
-
-              {/* Arrow 1 */}
-              <div className="hidden md:flex justify-center text-blue-500">
-                <ArrowRight className="w-6 h-6 animate-pulse" />
-              </div>
-              <div className="flex md:hidden justify-center text-blue-500">
-                <ArrowDown className="w-6 h-6 animate-pulse" />
-              </div>
-
-              {/* Inverter & Battery */}
-              <div className="bg-white p-4 rounded-lg border border-blue-200 shadow-sm text-center flex flex-col items-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
-                  <Cpu className="w-5 h-5" />
-                </div>
-                <div className="font-bold text-sm text-slate-900">2. Smart Inverter / Battery</div>
-                <p className="text-[11px] text-slate-500 font-mono">แปลงไฟ DC เป็น AC / สำรองไฟ</p>
-              </div>
-
-              {/* Arrow 2 */}
-              <div className="hidden md:flex justify-center text-blue-500">
-                <ArrowRight className="w-6 h-6 animate-pulse" />
-              </div>
-              <div className="flex md:hidden justify-center text-blue-500">
-                <ArrowDown className="w-6 h-6 animate-pulse" />
-              </div>
-
-              {/* Loads / Grid */}
-              <div className="bg-white p-4 rounded-lg border border-blue-200 shadow-sm text-center flex flex-col items-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                  <Home className="w-5 h-5" />
-                </div>
-                <div className="font-bold text-sm text-slate-900">3. Building Load & Grid</div>
-                <p className="text-[11px] text-slate-500 font-mono">จ่ายไฟเข้าอาคาร / สายส่งการไฟฟ้า</p>
-              </div>
-
+            {/* Slider Switch Tabs */}
+            <div className="flex items-center gap-1 bg-white p-1 rounded-md border border-slate-300">
+              {DIAGRAM_SYSTEMS.map((sys, idx) => (
+                <button
+                  key={sys.id}
+                  onClick={() => setCurrentDiagramIndex(idx)}
+                  className={`px-2.5 py-1 text-xs font-mono rounded transition ${
+                    currentDiagramIndex === idx 
+                      ? 'bg-blue-600 text-white font-bold shadow-sm' 
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {sys.id.replace('_', ' ')}
+                </button>
+              ))}
             </div>
           </div>
+
+          {/* Main Swipeable Flow Container */}
+          <div className="relative bg-white p-4 sm:p-6 rounded-lg border border-slate-200 shadow-inner">
+            
+            {/* Title of Active System */}
+            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-xs font-mono text-blue-600 font-bold">[ SYSTEM 0{currentDiagramIndex + 1} ]</span>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                  {DIAGRAM_SYSTEMS[currentDiagramIndex].title}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {DIAGRAM_SYSTEMS[currentDiagramIndex].desc}
+                </p>
+              </div>
+
+              {/* Prev / Next Navigation Buttons */}
+              <div className="flex items-center gap-1">
+                <button 
+                  onClick={prevDiagram} 
+                  className="p-1.5 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 transition"
+                  aria-label="Previous System"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={nextDiagram} 
+                  className="p-1.5 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 transition"
+                  aria-label="Next System"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Dynamic Diagram Nodes + Flow Animation */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-2 sm:gap-4 py-2">
+              {DIAGRAM_SYSTEMS[currentDiagramIndex].nodes.map((node, index, arr) => {
+                const IconComponent = node.icon;
+                return (
+                  <div key={index} className="flex flex-col md:flex-row items-center w-full md:w-auto flex-1">
+                    
+                    {/* Node Card */}
+                    <div className="w-full bg-slate-50 p-4 rounded-lg border border-slate-200 hover:border-blue-400 transition shadow-sm flex flex-col items-center text-center space-y-2">
+                      <div className={`w-12 h-12 rounded-full border ${node.color} flex items-center justify-center shadow-xs`}>
+                        <IconComponent className="w-6 h-6" />
+                      </div>
+                      <div className="font-bold text-xs sm:text-sm text-slate-900">{node.name}</div>
+                      <p className="text-[11px] text-slate-500 font-mono">{node.sub}</p>
+                    </div>
+
+                    {/* Animated Power Flow Arrow between nodes */}
+                    {index < arr.length - 1 && (
+                      <AnimatedFlowArrow />
+                    )}
+
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination Dots */}
+            <div className="flex justify-center items-center gap-2 mt-6">
+              {DIAGRAM_SYSTEMS.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentDiagramIndex(idx)}
+                  className={`h-2 rounded-full transition-all ${
+                    currentDiagramIndex === idx ? 'w-6 bg-blue-600' : 'w-2 bg-slate-300 hover:bg-slate-400'
+                  }`}
+                />
+              ))}
+            </div>
+
+          </div>
+
         </section>
 
         {/* SECTION 3: 3 SOLAR SYSTEM BASES */}
