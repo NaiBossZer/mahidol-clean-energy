@@ -213,7 +213,7 @@ function CleanEnergyPortal() {
   return (
     <div className="font-sans bg-white min-h-screen text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-900 pb-24 border-t-4 border-blue-900 overflow-x-hidden relative">
       
-      {/* Background Electric Circuit Pattern (ลวดลายวงจรไฟฟ้าเส้นสีน้ำเงิน-ขาว สบายตา ไม่เหลืองพรืด) */}
+      {/* Background Electric Circuit Pattern */}
       <div 
         className="absolute inset-0 pointer-events-none opacity-[0.04] z-0" 
         style={{
@@ -222,8 +222,8 @@ function CleanEnergyPortal() {
         }}
       />
 
-      {/* Header Bar - Blue & White Theme with Yellow Accent Line */}
-      <header className="w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 md:px-8 py-3.5 shadow-sm relative z-10">
+      {/* Header Bar - Sticky Top for Mobile/Desktop Scrolling */}
+      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 md:px-8 py-3.5 shadow-sm">
         
         {/* Electric Accent Line Under Header */}
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-900 via-amber-400 to-blue-900" />
@@ -275,7 +275,7 @@ function CleanEnergyPortal() {
       <main className="max-w-7xl mx-auto px-4 md:px-8 pt-6 space-y-10 relative z-10">
 
         {/* SECTION 1: HERO & METRICS */}
-        <section id="dashboard" className="scroll-mt-6 space-y-6">
+        <section id="dashboard" className="scroll-mt-20 space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-blue-50 border border-blue-200 font-mono text-[11px] text-blue-900 mb-2.5 font-bold shadow-xs">
@@ -299,7 +299,7 @@ function CleanEnergyPortal() {
             </a>
           </div>
 
-          {/* Metric Cards - Clean White Cards with Blue/Yellow Circuit Border Accents */}
+          {/* Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             
             <div className="bg-white p-5 rounded-lg border-2 border-slate-200 hover:border-blue-900 transition shadow-sm relative overflow-hidden">
@@ -351,7 +351,7 @@ function CleanEnergyPortal() {
         </section>
 
         {/* SECTION 2: VERTICAL FLOW DIAGRAM */}
-        <section id="flow" className="scroll-mt-6 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm max-w-lg mx-auto md:max-w-none relative overflow-hidden">
+        <section id="flow" className="scroll-mt-20 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-sm max-w-lg mx-auto md:max-w-none relative overflow-hidden">
           
           <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
             <div>
@@ -431,7 +431,7 @@ function CleanEnergyPortal() {
         </section>
 
         {/* SECTION 3: 3 SOLAR SYSTEM BASES */}
-        <section id="bases" className="scroll-mt-6 space-y-5">
+        <section id="bases" className="scroll-mt-20 space-y-5">
           <div className="border-b border-slate-200 pb-3">
             <span className="font-mono text-xs text-blue-900 font-bold tracking-widest">// ARCHITECTURE</span>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
@@ -520,7 +520,7 @@ function CleanEnergyPortal() {
         </section>
 
         {/* SECTION 4: ANALYTICS CHART */}
-        <section id="stats" className="scroll-mt-6 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-lg shadow-sm">
+        <section id="stats" className="scroll-mt-20 space-y-4 bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-lg shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <h2 className="text-sm sm:text-base font-bold text-slate-900 font-mono flex items-center gap-2">
               <LineChart className="w-4 h-4 text-blue-900" /> // PRODUCTION_ANALYTICS (kWh)
