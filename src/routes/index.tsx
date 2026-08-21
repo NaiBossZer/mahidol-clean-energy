@@ -56,7 +56,7 @@ const CLEAN_ENERGY_SLIDES = [
     badge: "EV CARPORT // SMART CHARGING",
     title: "โรงจอดรถโซลาร์ & EV Charger",
     subtitle: "สถานีอัดประจุไฟฟ้าพลังงานแสงอาทิตย์เพื่อยานยนต์ไฟฟ้า มหาวิทยาลัยมหิดล",
-    buttonText: "จองคิว EV Charger",
+    buttonText: "ชาร์จไฟฟ้าที่สถานี",
     buttonLink: "/ev",
   },
   {
@@ -290,7 +290,7 @@ export function CleanEnergyPortal() {
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-slate-800 font-['Mitr'] selection:bg-[#801818] selection:text-white flex flex-col justify-between antialiased">
       
-      {/* ==================== NAVBAR (สไตล์ตรงตามหน้าหลักและหน้าครั่ง 100%) ==================== */}
+      {/* ==================== NAVBAR (5 เมนูนำทางตรงตามที่ระบุ) ==================== */}
       <header className="sticky top-0 z-50 bg-[#0A2E4D] text-white shadow-md border-b-2 border-[#004B87]">
         <nav className="max-w-7xl mx-auto px-4 lg:px-6 py-2.5">
           <div className="flex items-center justify-between gap-4">
@@ -347,34 +347,20 @@ export function CleanEnergyPortal() {
               </div>
             </div>
 
-            {/* ฝั่งขวา: เมนูนำทาง */}
-            <div className="hidden xl:flex items-center space-x-5 text-xs sm:text-sm font-normal text-slate-200 shrink-0">
+            {/* ฝั่งขวา: เมนูนำทาง 5 รายการ */}
+            <div className="hidden xl:flex items-center space-x-6 text-xs sm:text-sm font-normal text-slate-200 shrink-0">
               <Link to="/" className="hover:text-[#F5B800] transition-colors py-1">
                 หน้าแรก
               </Link>
               <button
                 type="button"
-                onClick={() => scrollToSection("flow")}
-                className="hover:text-[#F5B800] transition-colors py-1 cursor-pointer"
-              >
-                ไดอะแกรมระบบ
-              </button>
-              <button
-                type="button"
                 onClick={() => scrollToSection("bases")}
                 className="hover:text-[#F5B800] transition-colors py-1 cursor-pointer"
               >
-                ฐานการเรียนรู้
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("stats")}
-                className="hover:text-[#F5B800] transition-colors py-1 cursor-pointer"
-              >
-                สถิติพลังงาน
+                คลังความรู้
               </button>
               <Link to="/ev" className="hover:text-[#F5B800] transition-colors py-1">
-                จอง EV Charger
+                ชาร์จไฟฟ้าที่สถานี
               </Link>
               <Link to="/survey" className="hover:text-[#F5B800] transition-colors py-1">
                 แบบสอบถาม
@@ -405,27 +391,13 @@ export function CleanEnergyPortal() {
               </Link>
               <button
                 type="button"
-                onClick={() => scrollToSection("flow")}
-                className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-white"
-              >
-                ไดอะแกรมระบบ
-              </button>
-              <button
-                type="button"
                 onClick={() => scrollToSection("bases")}
                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-white"
               >
-                ฐานการเรียนรู้
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("stats")}
-                className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-white"
-              >
-                สถิติพลังงาน
+                คลังความรู้
               </button>
               <Link to="/ev" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg hover:bg-white/10 text-white">
-                จอง EV Charger
+                ชาร์จไฟฟ้าที่สถานี
               </Link>
               <Link to="/survey" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg hover:bg-white/10 text-white">
                 แบบสอบถาม
@@ -677,7 +649,7 @@ export function CleanEnergyPortal() {
             </div>
           </section>
 
-          {/* SECTION 3: 3 SOLAR SYSTEM BASES (BENTO GRID 2.0) */}
+          {/* SECTION 3: 3 SOLAR SYSTEM BASES */}
           <section id="bases" className="scroll-mt-24 space-y-6">
             <div className="text-center space-y-1">
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
@@ -890,7 +862,7 @@ export function CleanEnergyPortal() {
         </div>
       )}
 
-      {/* FOOTER (สไตล์มาตรฐานของทุกหน้า 100%) */}
+      {/* FOOTER */}
       <footer className="bg-[#071F34] text-slate-300 py-10 border-t border-slate-800 mt-16 space-y-3 text-center">
         <div className="max-w-5xl mx-auto px-4 space-y-2">
           <p className="text-xs sm:text-sm font-normal text-slate-300 leading-relaxed">
