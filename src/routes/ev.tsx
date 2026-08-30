@@ -29,7 +29,10 @@ function EVGuideAndBookingPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQsVhjSN6t81B1Isb5FPDQxm2sEU2g0ZzN8VgnULPENDMOqcaJNH5JTqVbK-5L8c1fWw/exec";
+  // Public endpoint only for the current prototype. Production must proxy this
+  // through an authenticated server endpoint with rate limiting and CSRF checks.
+  const GOOGLE_SCRIPT_URL = import.meta.env.VITE_BOOKING_ENDPOINT ?? "https://script.google.com/macros/s/AKfycbwQsVhjSN6t81B1Isb5FPDQxm2sEU2g0ZzN8VgnULPENDMOqcaJNH5JTqVbK-5L8c1fWw/exec";
+  const today = new Date().toISOString().slice(0, 10);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +40,7 @@ function EVGuideAndBookingPage() {
     setSuccess(false);
 
     try {
+      if (!GOOGLE_SCRIPT_URL) throw new Error('Booking endpoint is not configured');
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -122,6 +126,7 @@ function EVGuideAndBookingPage() {
           >
             <ArrowLeft className="w-3.5 h-3.5 text-blue-900" /> MAIN_PORTAL
           </Link>
+          <Link to="/calendar" className="px-3 py-1.5 bg-amber-400 text-blue-950 font-mono text-xs rounded font-semibold transition hover:bg-amber-300">ปฏิทินรวม</Link>
         </div>
       </header>
 
@@ -241,7 +246,7 @@ function EVGuideAndBookingPage() {
             </div>
 
             {success && (
-              <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-4 rounded-lg flex items-center gap-3 text-xs font-mono leading-relaxed shadow-xs">
+              <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-4 rounded-lg flex items-center gap-3 text-xs font-mono leading-relaxed shadow-xs">
                 <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
                 <span>SUCCESS: บันทึกข้อมูลการจองเรียบร้อยแล้ว ระบบได้ส่งข้อมูลแจ้งเตือนไปยังเจ้าหน้าที่แล้วครับ</span>
               </div>
@@ -270,6 +275,7 @@ function EVGuideAndBookingPage() {
                   <input 
                     type="date" 
                     required
+                    min={today}
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-blue-900 transition font-mono shadow-xs" 
