@@ -1,5 +1,6 @@
 import { Link, redirect, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
+import SolarCellGame from "../components/SolarCellGame";
 import { 
   GraduationCap, 
   ArrowLeft, 
@@ -464,6 +465,14 @@ export function DashboardPage() {
 
       {/* Main Container */}
       <main className="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-5 flex-1">
+        <section aria-labelledby="solar-learning-game" className="space-y-3">
+          <div className="border-b border-slate-200 pb-3">
+            <span className="font-mono text-xs text-blue-900 font-bold tracking-widest">// LEARNING_SIMULATION</span>
+            <h1 id="solar-learning-game" className="mt-1 text-2xl font-bold text-slate-900">เกมเรียนรู้การจัดการพลังงานแสงอาทิตย์</h1>
+            <p className="mt-1 text-sm text-slate-600">ทดลองเลือกช่วงเวลาและบริหารแบตเตอรี่ เพื่อเรียนรู้สมดุลพลังงานในพื้นที่จริง</p>
+          </div>
+          <SolarCellGame />
+        </section>
         
         {errorMsg && (
           <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg text-xs font-mono flex items-center gap-2 shadow-xs">

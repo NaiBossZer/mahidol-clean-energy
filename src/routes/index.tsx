@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import SolarCellGame from "../components/SolarCellGame";
 import { 
   LineChart, ArrowLeft, X, 
   Zap, Sun, Cpu, Leaf,
@@ -244,7 +245,7 @@ function VerticalFlowArrow() {
     </div>
   );
 }
-
+      <SolarCellGame />
 export function CleanEnergyPortal() {
   const [activeBase, setActiveBase] = useState<BaseType | null>(null);
   const [currentDiagramIndex, setCurrentDiagramIndex] = useState<number>(0);
