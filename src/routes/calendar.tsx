@@ -1,7 +1,6 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { Link } from "react-router-dom";
 import { CalendarDays, Leaf, BatteryCharging, MapPin, ArrowLeft } from 'lucide-react';
 
-export const Route = createFileRoute('/calendar')({ component: CalendarPage });
 
 type CalendarEvent = {
   date: string;
@@ -48,3 +47,5 @@ function CalendarPage() {
     </main>
   );
 }
+
+

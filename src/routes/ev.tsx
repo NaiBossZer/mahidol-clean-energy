@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { Link } from "react-router-dom";
 import { useState } from 'react';
 import { 
   BatteryCharging, 
@@ -16,10 +16,6 @@ import {
   Terminal,
   ShieldCheck
 } from 'lucide-react';
-
-export const Route = createFileRoute('/ev/')({
-  component: EVGuideAndBookingPage,
-});
 
 function EVGuideAndBookingPage() {
   const [station, setStation] = useState('สถานีสบปราบ (18 kWp AC Type 2)');
@@ -336,3 +332,5 @@ function EVGuideAndBookingPage() {
 }
 
 export default EVGuideAndBookingPage;
+
+

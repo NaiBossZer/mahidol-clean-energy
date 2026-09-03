@@ -1,10 +1,6 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import { Sun, BatteryCharging, Zap, Home, Info, X, ChevronLeft, ChevronRight, ArrowDown } from 'lucide-react';
-
-export const Route = createFileRoute('/slides')({
-  component: KnowledgeSlidesPage,
-});
 
 function KnowledgeSlidesPage() {
   const navigate = useNavigate();
@@ -31,7 +27,7 @@ function KnowledgeSlidesPage() {
             </h2>
           </div>
           <button 
-            onClick={() => navigate({ to: '/' })}
+            onClick={() => navigate('/')}
             className="p-2 text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-full transition"
           >
             <X className="w-5 h-5" />
@@ -236,3 +232,5 @@ function KnowledgeSlidesPage() {
     </div>
   );
 }
+
+

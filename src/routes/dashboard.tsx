@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { 
   GraduationCap, 
@@ -24,18 +24,6 @@ import {
   Building2,
   Tag
 } from "lucide-react";
-
-export const Route = createFileRoute("/dashboard")({
-  beforeLoad: () => {
-    if (typeof window !== "undefined") {
-      const isAuth = sessionStorage.getItem("dashboard_auth") === "true";
-      if (!isAuth) {
-        throw redirect({ to: "/login" });
-      }
-    }
-  },
-  component: DashboardPage,
-});
 
 const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbxIXYFkonDlYf8sb1VqTDoJXlsZ58Pd53qYSP-rxeLc-9_hiHA4kKIUVAUEM-IdcrLIkQ/exec";
@@ -108,7 +96,7 @@ export function DashboardPage() {
   useEffect(() => {
     const isAuth = sessionStorage.getItem("dashboard_auth") === "true";
     if (!isAuth) {
-      navigate({ to: "/login" });
+      navigate("/login");
       return;
     }
     fetchData();
@@ -116,7 +104,7 @@ export function DashboardPage() {
 
   const handleLogout = () => {
     sessionStorage.clear();
-    navigate({ to: "/login", replace: true });
+    navigate("/login", { replace: true });
   };
 
   const handleResetFilter = () => {
@@ -895,3 +883,5 @@ export function DashboardPage() {
 }
 
 export default DashboardPage;
+
+

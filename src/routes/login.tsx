@@ -1,10 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Lock, ArrowLeft, GraduationCap, ShieldAlert, KeyRound } from "lucide-react";
-
-export const Route = createFileRoute("/login")({
-  component: LoginPage,
-});
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -15,7 +11,7 @@ export function LoginPage() {
     e.preventDefault();
     if (password === "ENLP2517") {
       sessionStorage.setItem("dashboard_auth", "true");
-      navigate({ to: "/dashboard" });
+      navigate("/dashboard");
     } else {
       setError("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
     }
@@ -130,3 +126,5 @@ export function LoginPage() {
 }
 
 export default LoginPage;
+
+

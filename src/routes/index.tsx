@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { 
   LineChart, ArrowLeft, X, 
@@ -7,10 +7,6 @@ import {
   Home, ChevronLeft
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-
-export const Route = createFileRoute('/')({
-  component: CleanEnergyPortal,
-});
 
 // ข้อมูล 6 ภาพสไลด์แบนเนอร์เฉพาะสำหรับ Clean Energy Portal
 const CLEAN_ENERGY_SLIDES = [
@@ -879,3 +875,5 @@ export function CleanEnergyPortal() {
 }
 
 export default CleanEnergyPortal;
+
+
