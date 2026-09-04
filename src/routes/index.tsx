@@ -245,7 +245,6 @@ function VerticalFlowArrow() {
     </div>
   );
 }
-      <SolarCellGame />
 export function CleanEnergyPortal() {
   const [activeBase, setActiveBase] = useState<BaseType | null>(null);
   const [currentDiagramIndex, setCurrentDiagramIndex] = useState<number>(0);
@@ -409,6 +408,14 @@ export function CleanEnergyPortal() {
 
       {/* ==================== MAIN CONTENT ==================== */}
       <main className="grow">
+        <section id="learning-game" className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8" aria-labelledby="learning-game-title">
+          <div className="mb-4 border-b border-slate-200 pb-3">
+            <p className="font-mono text-xs font-bold tracking-widest text-[#0A2E4D]">// LEARNING_SIMULATION</p>
+            <h1 id="learning-game-title" className="mt-1 text-2xl font-bold text-slate-900">เกมเรียนรู้การจัดการพลังงานแสงอาทิตย์</h1>
+            <p className="mt-1 text-sm text-slate-600">ทดลองบริหารพลังงานจากแสงอาทิตย์ แบตเตอรี่ และสถานีชาร์จ EV</p>
+          </div>
+          <SolarCellGame />
+        </section>
 
         {/* ==================== HERO SLIDER BANNER SECTION (6 สไลด์พลังงานสะอาด) ==================== */}
         <section className="relative w-full h-[460px] sm:h-[500px] lg:h-[540px] overflow-hidden bg-[#061C30]">

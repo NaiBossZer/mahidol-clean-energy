@@ -1,583 +1,521 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sun,
-  Moon,
-  Sunrise,
-  Sunset,
-  Zap,
-  BatteryCharging,
-  BatteryFull,
-  Battery,
-  Car,
-  Building2,
-  Leaf,
-  Trophy,
-  RotateCcw,
-  Info,
-  AlertTriangle,
-  CheckCircle2,
-  Gauge,
-  Wallet,
-  Cloud,
+  Sun, Zap, Battery, Home, Plug, AlertTriangle, CheckCircle2,
+  Sunrise, Sunset, Moon, CloudSun, Wallet, TrendingUp, Info,
+  Fan, Tv, Refrigerator, Lightbulb, Car, Power, ShieldAlert
 } from "lucide-react";
 
 // ============================================================
-// Types & Constants
+// Types
 // ============================================================
+type CalcMode = "bill" | "appliances";
+type UsagePattern = "day" | "night" | "mixed";
+type SystemType = "ONGRID" | "OFFGRID" | "HYBRID";
+type TimeOfDay = "morning" | "noon" | "evening" | "night";
 
-type TimeSlot = "morning" | "noon" | "evening" | "night";
-type BatteryMode = "charge" | "discharge";
-
-interface TimeConfig {
-  key: TimeSlot;
-  label: string;
-  time: string;
-  icon: React.ReactNode;
-  solarOutputPercent: number; // 0-100
-  campusLoadKw: number;
-  skyGradient: string;
+interface ApplianceItem {
+  id: string;
+  name: string;
+  icon: React.ElementType;
+  watt: number;
+  qty: number;
+  hours: number;
 }
 
-const MAX_SOLAR_KW = 120; // กำลังผลิตสูงสุดของแผงโซลาร์เซลล์ (kW)
-const EV_STATION_KW = 25; // กำลังไฟสถานีชาร์จ EV
-const BATTERY_CAPACITY_KW_STEP = 8; // อัตราชาร์จ/จ่ายไฟของแบตเตอรี่ต่อรอบ (kW)
-const CO2_FACTOR_KG_PER_KWH = 0.5; // kgCO2 ต่อ kWh ไฟฟ้าที่ประหยัดได้จาก Grid
-const BAHT_PER_KWH = 4.5; // ราคาไฟฟ้าโดยประมาณ (บาท/หน่วย)
+interface SizingResult {
+  kwp: number;
+  panelCount: number;
+  inverterKw: number;
+  batteryKwh: number;
+  budget: number;
+  monthlySaving: number;
+  paybackYears: number;
+}
 
-const TIME_CONFIGS: TimeConfig[] = [
-  {
-    key: "morning",
-    label: "เช้า",
-    time: "08:00 น.",
-    icon: <Sunrise className="w-5 h-5" />,
-    solarOutputPercent: 45,
-    campusLoadKw: 60,
-    skyGradient: "from-sky-200 via-amber-100 to-orange-100",
-  },
-  {
-    key: "noon",
-    label: "เที่ยงวัน",
-    time: "12:00 น.",
-    icon: <Sun className="w-5 h-5" />,
-    solarOutputPercent: 100,
-    campusLoadKw: 85,
-    skyGradient: "from-sky-300 via-sky-100 to-yellow-50",
-  },
-  {
-    key: "evening",
-    label: "เย็น",
-    time: "17:00 น.",
-    icon: <Sunset className="w-5 h-5" />,
-    solarOutputPercent: 30,
-    campusLoadKw: 95,
-    skyGradient: "from-orange-300 via-amber-200 to-rose-100",
-  },
-  {
-    key: "night",
-    label: "กลางคืน",
-    time: "22:00 น.",
-    icon: <Moon className="w-5 h-5" />,
-    solarOutputPercent: 0,
-    campusLoadKw: 50,
-    skyGradient: "from-indigo-900 via-indigo-800 to-slate-900",
-  },
+// ============================================================
+// Constants
+// ============================================================
+const PANEL_WATT = 500;
+const PRICE_PER_KWP = 35000;
+const PRICE_PER_KWH_BATTERY = 18000;
+const ELECTRICITY_UNIT_PRICE = 4.5;
+
+const DEFAULT_APPLIANCES: ApplianceItem[] = [
+  { id: "ac", name: "เครื่องปรับอากาศ", icon: Fan, watt: 1200, qty: 1, hours: 6 },
+  { id: "fridge", name: "ตู้เย็น", icon: Refrigerator, watt: 150, qty: 1, hours: 24 },
+  { id: "tv", name: "โทรทัศน์", icon: Tv, watt: 100, qty: 1, hours: 4 },
+  { id: "light", name: "หลอดไฟ", icon: Lightbulb, watt: 12, qty: 8, hours: 6 },
+  { id: "ev", name: "ชาร์จรถ EV", icon: Car, watt: 3300, qty: 0, hours: 4 },
 ];
-const DEFAULT_TIME_CONFIG: TimeConfig = TIME_CONFIGS.find((t) => t.key === "noon") as TimeConfig;
-// ============================================================
-// Helper Components
-// ============================================================
 
-interface StatCardProps {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  subValue?: string;
-  accentColor: string;
+const TIME_CONFIGS: { key: TimeOfDay; label: string; icon: React.ElementType; solarOutput: number }[] = [
+  { key: "morning", label: "เช้า", icon: Sunrise, solarOutput: 0.4 },
+  { key: "noon", label: "เที่ยง (แดดจัด)", icon: CloudSun, solarOutput: 1.0 },
+  { key: "evening", label: "เย็น", icon: Sunset, solarOutput: 0.2 },
+  { key: "night", label: "กลางคืน", icon: Moon, solarOutput: 0 },
+];
+const DEFAULT_TIME_CONFIG = TIME_CONFIGS.find((t) => t.key === "noon")!;
+
+const SYSTEM_INFO: Record<SystemType, {
+  title: string; desc: string; pros: string[]; cons: string[]; color: string;
+}> = {
+  ONGRID: {
+    title: "ON-GRID (ออนกริด)",
+    desc: "เชื่อมต่อกับการไฟฟ้า 100% ไม่มีแบตเตอรี่ ใช้ไฟกลางวันจากแดดโดยตรง",
+    pros: ["ต้นทุนติดตั้งต่ำที่สุด", "คืนทุนเร็ว", "ดูแลรักษาง่าย"],
+    cons: ["ไฟดับจากการไฟฟ้า ระบบจะดับตาม (Anti-Islanding)", "ไม่มีไฟสำรองกลางคืน"],
+    color: "#0EA5E9",
+  },
+  OFFGRID: {
+    title: "OFF-GRID (ออฟกริด)",
+    desc: "ไม่พึ่งพาการไฟฟ้าเลย ต้องมีแบตเตอรี่ขนาดใหญ่เก็บพลังงานทั้งหมด",
+    pros: ["ใช้ได้ในพื้นที่ห่างไกล ไม่มีสายไฟฟ้าเข้าถึง", "อิสระจากการไฟฟ้า 100%"],
+    cons: ["ต้นทุนแบตเตอรี่สูงมาก", "ต้องออกแบบระบบละเอียด", "คืนทุนช้า"],
+    color: "#16A34A",
+  },
+  HYBRID: {
+    title: "HYBRID (ไฮบริด)",
+    desc: "ผสมผสานทั้งสองระบบ เชื่อมการไฟฟ้า + มีแบตเตอรี่สำรอง",
+    pros: ["ประหยัดค่าไฟกลางวัน", "ไฟดับก็ยังมีไฟสำรองใช้ในบ้าน", "ยืดหยุ่นที่สุด"],
+    cons: ["ต้นทุนสูงกว่าออนกริด", "ต้องบำรุงรักษาแบตเตอรี่"],
+    color: "#F2A900",
+  },
+};
+
+// ============================================================
+// Calculation Helpers
+// ============================================================
+function calcFromBill(bill: number, pattern: UsagePattern, systemType: SystemType): SizingResult {
+  const monthlyUnits = bill / ELECTRICITY_UNIT_PRICE;
+  const dailyUnits = monthlyUnits / 30;
+  const dayFactor = pattern === "day" ? 0.75 : pattern === "night" ? 0.35 : 0.55;
+  const targetDailyOffset = dailyUnits * dayFactor;
+  const kwp = Math.max(1, Math.round((targetDailyOffset / 4) * 10) / 10);
+  const panelCount = Math.ceil((kwp * 1000) / PANEL_WATT);
+  const inverterKw = Math.max(1.5, Math.round(kwp * 0.9 * 10) / 10);
+  const batteryKwh =
+    systemType === "ONGRID" ? 0 :
+    systemType === "OFFGRID" ? Math.round(dailyUnits * 1.3 * 10) / 10 :
+    Math.round(dailyUnits * 0.5 * 10) / 10;
+  const budget = Math.round(kwp * PRICE_PER_KWP + batteryKwh * PRICE_PER_KWH_BATTERY);
+  const monthlySaving = Math.round(targetDailyOffset * 30 * ELECTRICITY_UNIT_PRICE);
+  const paybackYears = monthlySaving > 0 ? Math.round((budget / (monthlySaving * 12)) * 10) / 10 : 0;
+  return { kwp, panelCount, inverterKw, batteryKwh, budget, monthlySaving, paybackYears };
 }
 
-const StatCard: React.FC<StatCardProps> = ({ icon, label, value, subValue, accentColor }) => (
-  <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex flex-col gap-2 hover:shadow-md transition-shadow duration-300">
-    <div className="flex items-center justify-between">
-      <span className="text-slate-500 text-sm font-medium">{label}</span>
-      <div
-        className="w-9 h-9 rounded-xl flex items-center justify-center"
-        style={{ backgroundColor: `${accentColor}1A`, color: accentColor }}
-      >
-        {icon}
-      </div>
-    </div>
-    <div className="flex items-baseline gap-2">
-      <span className="text-2xl font-bold text-slate-800">{value}</span>
-      {subValue && <span className="text-xs text-slate-400">{subValue}</span>}
-    </div>
-  </div>
-);
-
-interface ProgressBarProps {
-  percent: number;
-  colorFrom: string;
-  colorTo: string;
-  height?: string;
+function calcFromAppliances(items: ApplianceItem[], systemType: SystemType): SizingResult {
+  const dailyWh = items.reduce((sum, it) => sum + it.watt * it.qty * it.hours, 0);
+  const dailyUnits = dailyWh / 1000;
+  const kwp = Math.max(1, Math.round((dailyUnits / 4) * 10) / 10);
+  const panelCount = Math.ceil((kwp * 1000) / PANEL_WATT);
+  const peakWatt = items.reduce((sum, it) => sum + it.watt * it.qty, 0);
+  const inverterKw = Math.max(1.5, Math.round((peakWatt / 1000) * 1.2 * 10) / 10);
+  const batteryKwh =
+    systemType === "ONGRID" ? 0 :
+    systemType === "OFFGRID" ? Math.round(dailyUnits * 1.3 * 10) / 10 :
+    Math.round(dailyUnits * 0.5 * 10) / 10;
+  const budget = Math.round(kwp * PRICE_PER_KWP + batteryKwh * PRICE_PER_KWH_BATTERY);
+  const monthlySaving = Math.round(dailyUnits * 0.7 * 30 * ELECTRICITY_UNIT_PRICE);
+  const paybackYears = monthlySaving > 0 ? Math.round((budget / (monthlySaving * 12)) * 10) / 10 : 0;
+  return { kwp, panelCount, inverterKw, batteryKwh, budget, monthlySaving, paybackYears };
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ percent, colorFrom, colorTo, height = "h-3" }) => (
-  <div className={`w-full bg-slate-100 rounded-full ${height} overflow-hidden`}>
-    <div
-      className={`${height} rounded-full transition-all duration-700 ease-out`}
-      style={{
-        width: `${Math.min(100, Math.max(0, percent))}%`,
-        background: `linear-gradient(90deg, ${colorFrom}, ${colorTo})`,
-      }}
-    />
-  </div>
+// ============================================================
+// Flow Diagram Component
+// ============================================================
+const FlowLine: React.FC<{ active: boolean; color: string; d: string; reverse?: boolean }> = ({ active, color, d, reverse }) => (
+  <g>
+    <path d={d} fill="none" stroke="#CBD5E1" strokeWidth={3} strokeLinecap="round" />
+    {active && (
+      <circle r={5} fill={color}>
+        <animateMotion dur={reverse ? "1.6s" : "1.8s"} repeatCount="indefinite" path={d} keyPoints={reverse ? "1;0" : "0;1"} keyTimes="0;1" />
+      </circle>
+    )}
+  </g>
 );
+
+const FlowDiagram: React.FC<{ systemType: SystemType; hasSun: boolean; outage: boolean; usingBattery: boolean }> = ({
+  systemType, hasSun, outage, usingBattery,
+}) => {
+  const showGrid = systemType === "ONGRID" || systemType === "HYBRID";
+  const showBattery = systemType === "OFFGRID" || systemType === "HYBRID";
+  const gridDown = outage && showGrid;
+  const homeIsDark = systemType === "ONGRID" && outage;
+  const color = SYSTEM_INFO[systemType].color;
+
+  return (
+    <div className="w-full bg-slate-50 rounded-2xl border border-slate-200 p-4 overflow-x-auto">
+      <svg viewBox="0 0 800 300" className="w-full min-w-[700px] h-72">
+        <FlowLine active={hasSun} color="#F2A900" d="M 100 60 L 220 100" />
+        <FlowLine active={hasSun} color="#0EA5E9" d="M 260 100 L 380 100" />
+        {showGrid && <FlowLine active={!gridDown} color="#002D62" d="M 700 60 L 500 100" />}
+        {showBattery && (
+          <FlowLine
+            active={hasSun || usingBattery}
+            color="#16A34A"
+            d="M 420 140 L 420 220"
+            reverse={usingBattery && !hasSun}
+          />
+        )}
+        <FlowLine active={!homeIsDark} color={color} d="M 460 100 L 620 200" />
+
+        <foreignObject x="40" y="10" width="120" height="90">
+          <div className="flex flex-col items-center justify-center h-full">
+            <Sun className={`w-10 h-10 ${hasSun ? "text-amber-500" : "text-slate-300"}`} />
+            <span className="text-xs mt-1 text-slate-600">ดวงอาทิตย์</span>
+          </div>
+        </foreignObject>
+
+        <foreignObject x="200" y="60" width="120" height="90">
+          <div className="flex flex-col items-center justify-center h-full bg-white rounded-xl border border-slate-200 shadow-sm">
+            <Zap className="w-8 h-8 text-sky-500" />
+            <span className="text-xs mt-1 text-slate-600">แผงโซลาร์</span>
+          </div>
+        </foreignObject>
+
+        <foreignObject x="380" y="60" width="120" height="90">
+          <div className="flex flex-col items-center justify-center h-full bg-white rounded-xl border border-slate-200 shadow-sm">
+            <Plug className="w-8 h-8" style={{ color }} />
+            <span className="text-xs mt-1 text-slate-600 text-center">อินเวอร์เตอร์<br />DC → AC</span>
+          </div>
+        </foreignObject>
+
+        {showBattery && (
+          <foreignObject x="360" y="200" width="120" height="90">
+            <div className={`flex flex-col items-center justify-center h-full bg-white rounded-xl border shadow-sm ${usingBattery ? "border-green-400 ring-2 ring-green-300" : "border-slate-200"}`}>
+              <Battery className={`w-8 h-8 ${usingBattery ? "text-green-600" : "text-slate-400"}`} />
+              <span className="text-xs mt-1 text-slate-600">แบตเตอรี่ BESS</span>
+            </div>
+          </foreignObject>
+        )}
+
+        {showGrid && (
+          <foreignObject x="640" y="10" width="140" height="90">
+            <div className={`flex flex-col items-center justify-center h-full bg-white rounded-xl border shadow-sm ${gridDown ? "border-red-400 ring-2 ring-red-300" : "border-slate-200"}`}>
+              {gridDown ? <ShieldAlert className="w-8 h-8 text-red-500" /> : <Power className="w-8 h-8 text-blue-900" />}
+              <span className="text-xs mt-1 text-slate-600 text-center">สายส่งการไฟฟ้า{gridDown ? "\n(ตัดขาด)" : ""}</span>
+            </div>
+          </foreignObject>
+        )}
+
+        <foreignObject x="580" y="170" width="140" height="100">
+          <div className={`flex flex-col items-center justify-center h-full rounded-xl border shadow-sm transition-colors ${homeIsDark ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200"}`}>
+            <Home className={`w-9 h-9 ${homeIsDark ? "text-slate-500" : "text-amber-500"}`} />
+            <span className={`text-xs mt-1 text-center ${homeIsDark ? "text-slate-400" : "text-slate-600"}`}>
+              บ้าน{homeIsDark ? " (ไฟดับ)" : ""}
+            </span>
+          </div>
+        </foreignObject>
+      </svg>
+    </div>
+  );
+};
 
 // ============================================================
 // Main Component
 // ============================================================
+const SolarHomeCalculator: React.FC = () => {
+  const [mode, setMode] = useState<CalcMode>("bill");
+  const [bill, setBill] = useState<number>(3000);
+  const [pattern, setPattern] = useState<UsagePattern>("mixed");
+  const [appliances, setAppliances] = useState<ApplianceItem[]>(DEFAULT_APPLIANCES);
+  const [systemType, setSystemType] = useState<SystemType>("HYBRID");
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("noon");
+  const [outage, setOutage] = useState<boolean>(false);
 
-const SolarCellGame: React.FC = () => {
-  const [selectedTime, setSelectedTime] = useState<TimeSlot>("noon");
-  const [batteryMode, setBatteryMode] = useState<BatteryMode>("charge");
-  const [batteryLevel, setBatteryLevel] = useState<number>(50); // % 0-100
-  const [evStationOn, setEvStationOn] = useState<boolean>(false);
-  const [cumulativeCo2Kg, setCumulativeCo2Kg] = useState<number>(0);
-  const [cumulativeSavingBaht, setCumulativeSavingBaht] = useState<number>(0);
-  const [showTip, setShowTip] = useState<boolean>(false);
-
-  const currentConfig = useMemo(
-    () => TIME_CONFIGS.find((t) => t.key === selectedTime) ?? DEFAULT_TIME_CONFIG,
-    [selectedTime]
+  const currentTime = useMemo(
+    () => TIME_CONFIGS.find((t) => t.key === timeOfDay) ?? DEFAULT_TIME_CONFIG,
+    [timeOfDay]
   );
 
+  const result: SizingResult = useMemo(() => {
+    return mode === "bill"
+      ? calcFromBill(bill, pattern, systemType)
+      : calcFromAppliances(appliances, systemType);
+  }, [mode, bill, pattern, appliances, systemType]);
 
-  const solarPowerKw = useMemo(
-    () => Math.round((currentConfig.solarOutputPercent / 100) * MAX_SOLAR_KW),
-    [currentConfig]
-  );
+  const sunActive = currentTime.solarOutput > 0;
+  const usingBattery = outage && (systemType === "OFFGRID" || systemType === "HYBRID") && result.batteryKwh > 0;
+  const homeDark = outage && systemType === "ONGRID";
 
-  const totalLoadKw = useMemo(
-    () => currentConfig.campusLoadKw + (evStationOn ? EV_STATION_KW : 0),
-    [currentConfig, evStationOn]
-  );
-
-  // คำนวณสมดุลพลังงานทุกครั้งที่ปัจจัยเปลี่ยน
-  const balance = useMemo(() => {
-    let solarRemaining = solarPowerKw;
-    let load = totalLoadKw;
-    let batterySupportKw = 0;
-    let batteryChargeKw = 0;
-
-    // ใช้โซลาร์ตอบสนองโหลดก่อน
-    const solarUsedForLoad = Math.min(solarRemaining, load);
-    load -= solarUsedForLoad;
-    solarRemaining -= solarUsedForLoad;
-
-    if (batteryMode === "discharge" && load > 0 && batteryLevel > 0) {
-      batterySupportKw = Math.min(BATTERY_CAPACITY_KW_STEP, load);
-      load -= batterySupportKw;
-    }
-
-    if (batteryMode === "charge" && solarRemaining > 0 && batteryLevel < 100) {
-      batteryChargeKw = Math.min(BATTERY_CAPACITY_KW_STEP, solarRemaining);
-      solarRemaining -= batteryChargeKw;
-    }
-
-    const gridDrawKw = Math.max(0, load); // ไฟที่ต้องดึงจากสายส่งหลักเพิ่ม
-    const surplusKw = solarRemaining; // ไฟส่วนเกินที่ไม่ได้ใช้/เก็บ
-    const isNetZero = gridDrawKw === 0;
-
-    // Net Zero Score: คิดจากสัดส่วนโหลดที่ครอบคลุมได้ด้วยพลังงานสะอาด
-    const cleanCovered = totalLoadKw - gridDrawKw;
-    const scoreRaw = totalLoadKw > 0 ? (cleanCovered / totalLoadKw) * 100 : 100;
-    const score = Math.round(Math.max(0, Math.min(100, scoreRaw)));
-
-    return {
-      solarUsedForLoad,
-      batterySupportKw,
-      batteryChargeKw,
-      gridDrawKw,
-      surplusKw,
-      isNetZero,
-      score,
-    };
-  }, [solarPowerKw, totalLoadKw, batteryMode, batteryLevel]);
-
-  // อัปเดตระดับแบตเตอรี่แบบอนิเมชันเมื่อโหมด/เวลาเปลี่ยน
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBatteryLevel((prev) => {
-        if (batteryMode === "charge" && balance.batteryChargeKw > 0) {
-          return Math.min(100, prev + 1);
-        }
-        if (batteryMode === "discharge" && balance.batterySupportKw > 0) {
-          return Math.max(0, prev - 1);
-        }
-        return prev;
-      });
-    }, 900);
-    return () => clearInterval(interval);
-  }, [batteryMode, balance.batteryChargeKw, balance.batterySupportKw]);
-
-  // สะสมผลลัพธ์ CO2 และเงินประหยัดตามเวลาที่ผ่านไป (จำลองแบบ real-time tick)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const cleanEnergyKwh =
-        (balance.solarUsedForLoad + balance.batterySupportKw) * (5 / 60); // จำลอง 5 นาทีต่อ tick
-      if (cleanEnergyKwh > 0) {
-        setCumulativeCo2Kg((prev) => prev + cleanEnergyKwh * CO2_FACTOR_KG_PER_KWH);
-        setCumulativeSavingBaht((prev) => prev + cleanEnergyKwh * BAHT_PER_KWH);
-      }
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [balance.solarUsedForLoad, balance.batterySupportKw]);
-
-  const handleReset = useCallback(() => {
-    setSelectedTime("noon");
-    setBatteryMode("charge");
-    setBatteryLevel(50);
-    setEvStationOn(false);
-    setCumulativeCo2Kg(0);
-    setCumulativeSavingBaht(0);
-    setShowTip(false);
-  }, []);
-
-  const scoreColor =
-    balance.score >= 90 ? "#16A34A" : balance.score >= 60 ? "#F2A900" : "#DC2626";
+  const updateAppliance = (id: string, key: "qty" | "hours", value: number) => {
+    setAppliances((prev) => prev.map((it) => (it.id === id ? { ...it, [key]: Math.max(0, value) } : it)));
+  };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen bg-slate-100 py-8 px-4">
+      <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
-        <div
-          className={`relative overflow-hidden rounded-3xl p-6 md:p-8 bg-linear-to-br ${currentConfig.skyGradient} shadow-lg`}
-        >
-          <div className="absolute inset-0 bg-[#002D62]/10 backdrop-blur-[2px]" />
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-[#002D62] flex items-center justify-center shadow-md">
-                <Building2 className="w-7 h-7 text-[#F2A900]" />
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: "#002D62" }}>
+            ☀️ เครื่องคำนวณระบบโซลาร์เซลล์สำหรับบ้าน
+          </h1>
+          <p className="text-slate-500 text-sm md:text-base">
+            ประเมินขนาดระบบที่เหมาะสม เข้าใจ ON-GRID / OFF-GRID / HYBRID และจำลองสถานการณ์ไฟดับ
+          </p>
+        </div>
+
+        {/* SECTION 1: Calculator */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 space-y-5">
+          <div className="flex items-center gap-2">
+            <Wallet className="w-5 h-5" style={{ color: "#002D62" }} />
+            <h2 className="font-semibold text-lg text-slate-800">คำนวณขนาดระบบที่เหมาะกับบ้านคุณ</h2>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setMode("bill")}
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition ${mode === "bill" ? "bg-blue-900 text-white" : "bg-slate-100 text-slate-600"}`}
+            >
+              A. ประเมินจากค่าไฟ
+            </button>
+            <button
+              onClick={() => setMode("appliances")}
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition ${mode === "appliances" ? "bg-blue-900 text-white" : "bg-slate-100 text-slate-600"}`}
+            >
+              B. ประเมินจากเครื่องใช้ไฟฟ้า
+            </button>
+          </div>
+
+          {mode === "bill" ? (
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-slate-600 font-medium">ค่าไฟเฉลี่ยต่อเดือน (บาท)</label>
+                <input
+                  type="number"
+                  value={bill}
+                  onChange={(e) => setBill(Number(e.target.value))}
+                  className="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                />
               </div>
               <div>
-                <h1 className="text-lg md:text-2xl font-extrabold text-[#002D62]">
-                  ระบบจำลองพลังงานแสงอาทิตย์ &amp; สถานีชาร์จ EV
-                </h1>
-                <p className="text-sm md:text-base text-[#002D62]/80 font-medium">
-                  มหาวิทยาลัยมหิดล วิทยาเขตนครลำปาง
-                </p>
+                <label className="text-sm text-slate-600 font-medium">พฤติกรรมการใช้ไฟ</label>
+                <select
+                  value={pattern}
+                  onChange={(e) => setPattern(e.target.value as UsagePattern)}
+                  className="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                >
+                  <option value="day">เน้นใช้ไฟกลางวัน</option>
+                  <option value="night">เน้นใช้ไฟกลางคืน</option>
+                  <option value="mixed">ใช้ทั้งวัน (ผสม)</option>
+                </select>
               </div>
             </div>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/90 hover:bg-white text-[#002D62] font-semibold shadow-sm transition-all active:scale-95 self-start md:self-auto"
-            >
-              <RotateCcw className="w-4 h-4" />
-              รีเซ็ตเกม
-            </button>
+          ) : (
+            <div className="space-y-3">
+              {appliances.map((it) => {
+                const Icon = it.icon;
+                return (
+                  <div key={it.id} className="flex flex-wrap items-center gap-3 bg-slate-50 rounded-xl p-3 border border-slate-200">
+                    <Icon className="w-6 h-6 text-blue-900 shrink-0" />
+                    <span className="font-medium text-slate-700 min-w-[130px]">{it.name}</span>
+                    <span className="text-xs text-slate-400">{it.watt}W</span>
+                    <div className="flex items-center gap-1 ml-auto">
+                      <label className="text-xs text-slate-500">จำนวน</label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={it.qty}
+                        onChange={(e) => updateAppliance(it.id, "qty", Number(e.target.value))}
+                        className="w-16 border border-slate-300 rounded-lg px-2 py-1 text-sm"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <label className="text-xs text-slate-500">ชม./วัน</label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={24}
+                        value={it.hours}
+                        onChange={(e) => updateAppliance(it.id, "hours", Number(e.target.value))}
+                        className="w-16 border border-slate-300 rounded-lg px-2 py-1 text-sm"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Result Summary */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+            <SummaryCard icon={Sun} label="ขนาดแผงโซลาร์" value={`${result.kwp} kWp`} sub={`${result.panelCount} แผง (500W)`} color="#F2A900" />
+            <SummaryCard icon={Plug} label="Inverter ที่แนะนำ" value={`${result.inverterKw} kW`} color="#0EA5E9" />
+            <SummaryCard icon={Battery} label="แบตเตอรี่ BESS" value={result.batteryKwh > 0 ? `${result.batteryKwh} kWh` : "ไม่จำเป็น"} color="#16A34A" />
+            <SummaryCard icon={Wallet} label="งบประมาณติดตั้งโดยประมาณ" value={`฿${result.budget.toLocaleString()}`} color="#002D62" />
+            <SummaryCard icon={TrendingUp} label="ประหยัดค่าไฟ/เดือน" value={`฿${result.monthlySaving.toLocaleString()}`} color="#16A34A" />
+            <SummaryCard icon={CheckCircle2} label="ระยะเวลาคืนทุน" value={result.paybackYears > 0 ? `${result.paybackYears} ปี` : "-"} color="#F2A900" />
           </div>
         </div>
 
-        {/* Time Controller */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 md:p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Cloud className="w-5 h-5 text-[#002D62]" />
-            <h2 className="font-bold text-slate-800">เลือกช่วงเวลาจำลอง</h2>
+        {/* SECTION 2: System Comparison */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Info className="w-5 h-5" style={{ color: "#002D62" }} />
+            <h2 className="font-semibold text-lg text-slate-800">เปรียบเทียบระบบ ON-GRID / OFF-GRID / HYBRID</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {TIME_CONFIGS.map((cfg) => {
 
-const DEFAULT_TIME_CONFIG: TimeConfig = TIME_CONFIGS.find((t) => t.key === "noon") as TimeConfig;
-              const active = cfg.key === selectedTime;
+          <div className="flex gap-2 flex-wrap">
+            {(Object.keys(SYSTEM_INFO) as SystemType[]).map((key) => (
+              <button
+                key={key}
+                onClick={() => setSystemType(key)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition border-2`}
+                style={{
+                  backgroundColor: systemType === key ? SYSTEM_INFO[key].color : "white",
+                  color: systemType === key ? "white" : SYSTEM_INFO[key].color,
+                  borderColor: SYSTEM_INFO[key].color,
+                }}
+              >
+                {SYSTEM_INFO[key].title}
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={systemType}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="grid md:grid-cols-2 gap-4"
+            >
+              <div>
+                <p className="text-slate-600 text-sm mb-3">{SYSTEM_INFO[systemType].desc}</p>
+                <p className="font-semibold text-green-700 text-sm mb-1">ข้อดี</p>
+                <ul className="space-y-1 mb-3">
+                  {SYSTEM_INFO[systemType].pros.map((p, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" /> {p}
+                    </li>
+                  ))}
+                </ul>
+                <p className="font-semibold text-red-600 text-sm mb-1">ข้อจำกัด</p>
+                <ul className="space-y-1">
+                  {SYSTEM_INFO[systemType].cons.map((c, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                      <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" /> {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 flex items-center justify-center">
+                <table className="text-sm w-full">
+                  <tbody>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-2 text-slate-500">มีแบตเตอรี่</td>
+                      <td className="py-2 font-semibold text-right">{systemType === "ONGRID" ? "ไม่มี" : "มี"}</td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-2 text-slate-500">เชื่อมการไฟฟ้า</td>
+                      <td className="py-2 font-semibold text-right">{systemType === "OFFGRID" ? "ไม่เชื่อม" : "เชื่อม"}</td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-2 text-slate-500">ไฟดับยังใช้ไฟได้ไหม</td>
+                      <td className="py-2 font-semibold text-right">{systemType === "ONGRID" ? "ไม่ได้" : "ได้"}</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 text-slate-500">ต้นทุนโดยรวม</td>
+                      <td className="py-2 font-semibold text-right">
+                        {systemType === "ONGRID" ? "ต่ำ" : systemType === "HYBRID" ? "ปานกลาง-สูง" : "สูงมาก"}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* SECTION 3 & 4: Flow Diagram + Simulation */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Zap className="w-5 h-5" style={{ color: "#002D62" }} />
+            <h2 className="font-semibold text-lg text-slate-800">แผนภาพการไหลของไฟฟ้า และจำลองสถานการณ์จริง</h2>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {TIME_CONFIGS.map((t) => {
+              const Icon = t.icon;
               return (
                 <button
-                  key={cfg.key}
-                  onClick={() => setSelectedTime(cfg.key)}
-                  className={`flex flex-col items-center gap-2 rounded-2xl p-4 border-2 transition-all duration-200 ${
-                    active
-                      ? "border-[#002D62] bg-[#002D62] text-white shadow-md scale-[1.02]"
-                      : "border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-300"
+                  key={t.key}
+                  onClick={() => setTimeOfDay(t.key)}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition ${
+                    timeOfDay === t.key ? "bg-blue-900 text-white border-blue-900" : "bg-white text-slate-600 border-slate-300"
                   }`}
                 >
-                  <div className={active ? "text-[#F2A900]" : "text-slate-400"}>{cfg.icon}</div>
-                  <span className="font-semibold text-sm">{cfg.label}</span>
-                  <span className="text-xs opacity-80">{cfg.time}</span>
+                  <Icon className="w-4 h-4" /> {t.label}
                 </button>
               );
             })}
-          </div>
-        </div>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            icon={<Sun className="w-5 h-5" />}
-            label="กำลังผลิตโซลาร์"
-            value={`${solarPowerKw} kW`}
-            subValue={`${currentConfig.solarOutputPercent}% กำลังสูงสุด`}
-            accentColor="#0EA5E9"
-          />
-          <StatCard
-            icon={<Building2 className="w-5 h-5" />}
-            label="โหลดอาคารเรียน"
-            value={`${currentConfig.campusLoadKw} kW`}
-            accentColor="#002D62"
-          />
-          <StatCard
-            icon={<Car className="w-5 h-5" />}
-            label="สถานีชาร์จ EV"
-            value={evStationOn ? `+${EV_STATION_KW} kW` : "ปิดอยู่"}
-            accentColor="#F2A900"
-          />
-          <StatCard
-            icon={<Zap className="w-5 h-5" />}
-            label="โหลดรวมทั้งหมด"
-            value={`${totalLoadKw} kW`}
-            accentColor="#DC2626"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Battery & EV Control */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Battery Management */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <BatteryCharging className="w-5 h-5 text-[#16A34A]" />
-                <h3 className="font-bold text-slate-800">แบตเตอรี่สำรอง (BESS)</h3>
-              </div>
-
-              <div className="flex items-center justify-center py-2">
-                <div className="relative w-24 h-24">
-                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      className="text-slate-100"
-                      strokeWidth="3.5"
-                      stroke="currentColor"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      strokeWidth="3.5"
-                      strokeDasharray={`${batteryLevel}, 100`}
-                      strokeLinecap="round"
-                      stroke={batteryLevel > 20 ? "#16A34A" : "#DC2626"}
-                      fill="none"
-                      className="transition-all duration-700"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    {batteryLevel > 80 ? (
-                      <BatteryFull className="w-5 h-5 text-[#16A34A]" />
-                    ) : (
-                      <Battery className="w-5 h-5 text-slate-500" />
-                    )}
-                    <span className="font-bold text-slate-800 text-sm">{batteryLevel}%</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 bg-slate-50 rounded-xl p-1">
-                <button
-                  onClick={() => setBatteryMode("charge")}
-                  className={`py-2 rounded-lg text-sm font-semibold transition-all ${
-                    batteryMode === "charge"
-                      ? "bg-[#0EA5E9] text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
-                >
-                  ⚡ ชาร์จเก็บไฟ
-                </button>
-                <button
-                  onClick={() => setBatteryMode("discharge")}
-                  className={`py-2 rounded-lg text-sm font-semibold transition-all ${
-                    batteryMode === "discharge"
-                      ? "bg-[#16A34A] text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
-                >
-                  🔋 จ่ายไฟช่วยเหลือ
-                </button>
-              </div>
-
-              <p className="text-xs text-slate-500 text-center">
-                {batteryMode === "charge"
-                  ? "แบตเตอรี่กำลังดูดซับพลังงานส่วนเกินจากโซลาร์เซลล์"
-                  : "แบตเตอรี่กำลังจ่ายไฟเสริมให้กับโหลดของอาคาร"}
-              </p>
-            </div>
-
-            {/* EV Station Toggle */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-[#F2A900]/15 flex items-center justify-center">
-                    <Car className="w-5 h-5 text-[#F2A900]" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-800 text-sm">สถานีชาร์จ EV</p>
-                    <p className="text-xs text-slate-400">เพิ่มโหลด {EV_STATION_KW} kW</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setEvStationOn((prev) => !prev)}
-                  className={`w-14 h-8 rounded-full flex items-center px-1 transition-colors duration-300 ${
-                    evStationOn ? "bg-[#F2A900]" : "bg-slate-200"
-                  }`}
-                >
-                  <div
-                    className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-300 ${
-                      evStationOn ? "translate-x-6" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={() => setOutage((o) => !o)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold border-2 transition ml-auto ${
+                outage ? "bg-red-600 text-white border-red-600" : "bg-white text-red-600 border-red-500"
+              }`}
+            >
+              <ShieldAlert className="w-4 h-4" /> {outage ? "ยกเลิกไฟดับ" : "จำลองไฟดับจากการไฟฟ้า!"}
+            </button>
           </div>
 
-          {/* Power Balance Dashboard */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 space-y-5">
-              <div className="flex items-center gap-2">
-                <Gauge className="w-5 h-5 text-[#002D62]" />
-                <h3 className="font-bold text-slate-800">สมดุลพลังงาน (Power Balance)</h3>
-              </div>
+          <FlowDiagram systemType={systemType} hasSun={sunActive} outage={outage} usingBattery={usingBattery} />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-slate-500">พลังงานผลิตได้</span>
-                    <span className="font-semibold text-[#0EA5E9]">{solarPowerKw} kW</span>
-                  </div>
-                  <ProgressBar percent={(solarPowerKw / MAX_SOLAR_KW) * 100} colorFrom="#0EA5E9" colorTo="#38BDF8" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-slate-500">พลังงานที่ใช้</span>
-                    <span className="font-semibold text-[#DC2626]">{totalLoadKw} kW</span>
-                  </div>
-                  <ProgressBar percent={(totalLoadKw / (MAX_SOLAR_KW + EV_STATION_KW)) * 100} colorFrom="#F87171" colorTo="#DC2626" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-sky-50 rounded-xl py-3">
-                  <p className="text-xs text-slate-500 mb-1">โซลาร์ป้อนโหลด</p>
-                  <p className="font-bold text-[#0EA5E9]">{Math.round(balance.solarUsedForLoad)} kW</p>
-                </div>
-                <div className="bg-emerald-50 rounded-xl py-3">
-                  <p className="text-xs text-slate-500 mb-1">แบตช่วยจ่าย</p>
-                  <p className="font-bold text-[#16A34A]">{Math.round(balance.batterySupportKw)} kW</p>
-                </div>
-                <div className="bg-red-50 rounded-xl py-3">
-                  <p className="text-xs text-slate-500 mb-1">ดึงไฟหลักเพิ่ม</p>
-                  <p className="font-bold text-[#DC2626]">{Math.round(balance.gridDrawKw)} kW</p>
-                </div>
-              </div>
-
-              {/* Status Box */}
-              <div
-                className={`rounded-2xl p-4 flex items-center gap-3 border ${
-                  balance.isNetZero
-                    ? "bg-[#16A34A]/10 border-[#16A34A]/30"
-                    : "bg-[#DC2626]/10 border-[#DC2626]/30"
+          <AnimatePresence>
+            {outage && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className={`rounded-xl p-4 border-2 flex items-start gap-3 ${
+                  homeDark ? "bg-red-50 border-red-300" : "bg-green-50 border-green-300"
                 }`}
               >
-                {balance.isNetZero ? (
-                  <CheckCircle2 className="w-6 h-6 text-[#16A34A] shrink-0" />
-                ) : (
-                  <AlertTriangle className="w-6 h-6 text-[#DC2626] shrink-0" />
-                )}
-                <div>
-                  <p className={`font-bold ${balance.isNetZero ? "text-[#16A34A]" : "text-[#DC2626]"}`}>
-                    {balance.isNetZero ? "Zero Carbon Grid!" : "มีการดึงไฟหลักเพิ่ม (Grid Draw)"}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    {balance.isNetZero
-                      ? "พลังงานสะอาดเพียงพอต่อความต้องการทั้งหมดของแคมปัส"
-                      : `ต้องการไฟเพิ่มจากสายส่งหลัก ${Math.round(balance.gridDrawKw)} kW เพื่อชดเชยส่วนที่ขาด`}
-                  </p>
-                </div>
-              </div>
-
-              {/* Net Zero Score */}
-              <div className="flex items-center gap-4 pt-2">
-                <div className="relative w-20 h-20 shrink-0">
-                  <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      className="text-slate-100"
-                      strokeWidth="3.5"
-                      stroke="currentColor"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      strokeWidth="3.5"
-                      strokeDasharray={`${balance.score}, 100`}
-                      strokeLinecap="round"
-                      stroke={scoreColor}
-                      fill="none"
-                      className="transition-all duration-700"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-extrabold text-slate-800">{balance.score}</span>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Trophy className="w-4 h-4 text-[#F2A900]" />
-                    <span className="font-bold text-slate-800 text-sm">Net Zero Score</span>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    คะแนนสะท้อนสัดส่วนพลังงานสะอาดที่ครอบคลุมความต้องการไฟฟ้าทั้งหมด
-                  </p>
-                  <button
-                    onClick={() => setShowTip((prev) => !prev)}
-                    className="mt-2 flex items-center gap-1 text-xs text-[#002D62] font-semibold hover:underline"
-                  >
-                    <Info className="w-3.5 h-3.5" />
-                    เคล็ดลับทำคะแนนเต็ม 100
-                  </button>
-                  {showTip && (
-                    <div className="mt-2 text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-3">
-                      เลือกช่วง "เที่ยงวัน" ที่โซลาร์ผลิตไฟสูงสุด แล้วตั้งแบตเตอรี่เป็นโหมด
-                      "ชาร์จเก็บไฟ" เพื่อเก็บพลังงานส่วนเกินไว้ใช้ในช่วงเย็นหรือกลางคืน
-                      จากนั้นสลับมาโหมด "จ่ายไฟช่วยเหลือ" ในช่วงที่โซลาร์ผลิตไฟน้อย
-                      เพื่อให้ Grid Draw เป็น 0 ตลอดเวลา
+                {homeDark ? (
+                  <>
+                    <ShieldAlert className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-red-700">บ้านไฟดับทันที!</p>
+                      <p className="text-sm text-red-600 mt-1">
+                        ระบบ ON-GRID ต้องตัดการจ่ายไฟอัตโนมัติเมื่อการไฟฟ้าดับ (Anti-Islanding Protection)
+                        เพื่อความปลอดภัยของช่างที่ซ่อมสายไฟฟ้าภายนอก แม้แผงโซลาร์จะยังผลิตไฟได้อยู่ก็ตาม
+                      </p>
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Cumulative Impact */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-linear-to-br from-[#16A34A] to-[#15803D] rounded-2xl p-5 text-white shadow-md">
-                <div className="flex items-center gap-2 mb-2">
-                  <Leaf className="w-5 h-5" />
-                  <span className="text-sm font-medium opacity-90">CO2 ที่ลดได้สะสม</span>
-                </div>
-                <p className="text-2xl font-extrabold">{cumulativeCo2Kg.toFixed(1)} kg</p>
-              </div>
-              <div className="bg-linear-to-br from-[#002D62] to-[#001A3D] rounded-2xl p-5 text-white shadow-md">
-                <div className="flex items-center gap-2 mb-2">
-                  <Wallet className="w-5 h-5 text-[#F2A900]" />
-                  <span className="text-sm font-medium opacity-90">เงินที่ประหยัดได้สะสม</span>
-                </div>
-                <p className="text-2xl font-extrabold">{cumulativeSavingBaht.toFixed(1)} บาท</p>
-              </div>
-            </div>
-          </div>
+                  </>
+                ) : (
+                  <>
+                    <Battery className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-green-700">ไฟในบ้านยังใช้งานได้ปกติ!</p>
+                      <p className="text-sm text-green-600 mt-1">
+                        ระบบ {systemType === "HYBRID" ? "HYBRID" : "OFF-GRID"} ตัดขาดจากกริดอัตโนมัติ
+                        และดึงพลังงานจากแบตเตอรี่ ({result.batteryKwh} kWh) มาจ่ายให้เครื่องใช้ไฟฟ้าในบ้านแทน
+                      </p>
+                    </div>
+                  </>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        <footer className="text-center text-xs text-slate-400 pt-4 pb-6">
-          ระบบจำลองเพื่อการศึกษา — มหาวิทยาลัยมหิดล วิทยาเขตนครลำปาง
-        </footer>
       </div>
     </div>
   );
 };
 
-export default SolarCellGame;
+const SummaryCard: React.FC<{ icon: React.ElementType; label: string; value: string; sub?: string; color: string }> = ({
+  icon: Icon, label, value, sub, color,
+}) => (
+  <div className="bg-slate-50 rounded-xl border border-slate-200 p-3 flex flex-col gap-1">
+    <div className="flex items-center gap-2">
+      <Icon className="w-4 h-4" style={{ color }} />
+      <span className="text-xs text-slate-500">{label}</span>
+    </div>
+    <span className="text-lg font-bold text-slate-800">{value}</span>
+    {sub && <span className="text-xs text-slate-400">{sub}</span>}
+  </div>
+);
+
+export default SolarHomeCalculator;
